@@ -466,6 +466,34 @@
             >
             </a-box>
 
+            <a-box
+              id="colisor-poste"
+              static-body
+              visible="true"
+              color="green"
+              opacity="0.5"
+              width="0.3"
+              depth="0.3"
+              height="2.8"
+              position="0 1.2 0"
+              config-fisica="restituicao: 0.6; atrito: 0.3"
+            >
+            </a-box>
+
+            <a-box
+              id="colisor-base-poste"
+              static-body
+              visible="true"
+              color="green"
+              opacity="0.5"
+              width="0.55"
+              depth="0.55"
+              height="0.15"
+              position="0 0 0"
+              config-fisica="restituicao: 0.6; atrito: 0.3"
+            >
+            </a-box>
+
             <a-torus
               id="colisor-aro"
               color="red"
@@ -966,6 +994,34 @@
             >
             </a-box>
 
+            <a-box
+              id="colisor-poste"
+              static-body
+              visible="true"
+              color="green"
+              opacity="0.5"
+              width="0.3"
+              depth="0.3"
+              height="2.8"
+              position="0 1.2 0"
+              config-fisica="restituicao: 0.6; atrito: 0.3"
+            >
+            </a-box>
+
+            <a-box
+              id="colisor-base-poste"
+              static-body
+              visible="true"
+              color="green"
+              opacity="0.5"
+              width="0.55"
+              depth="0.55"
+              height="0.15"
+              position="0 0 0"
+              config-fisica="restituicao: 0.6; atrito: 0.3"
+            >
+            </a-box>
+
             <a-torus
               id="colisor-aro"
               color="red"
@@ -1054,7 +1110,7 @@
           roughness="0.5"
           shadow="cast: true; receive: true"
           dynamic-body="shape: sphere; mass: 0.62; linearDamping: 0.0; angularDamping: 0.01"
-          config-fisica="restituicao: 1.2; atrito: 0.5"
+          config-fisica="restituicao: 0.5; atrito: 0.5"
           hoverable
           grabbable
           draggable
