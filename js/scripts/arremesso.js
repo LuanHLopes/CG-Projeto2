@@ -6,6 +6,8 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
     this.hudContainer = document.getElementById("hud-container");
     this.controlesBola = document.getElementById("controles-bola");
+    
+    this.txtMira = document.getElementById("txt-mira");
 
     this.segurando = false;
     this.mostrarTrajetoria = true;
@@ -36,7 +38,14 @@ AFRAME.registerComponent("mecanica-arremesso", {
   alternarMira: function (e) {
     if (e.code === "KeyM") {
       this.mostrarTrajetoria = !this.mostrarTrajetoria;
-      console.log("Trajetória Visível:", this.mostrarTrajetoria);
+      
+      if (this.txtMira) {
+        this.txtMira.innerText = this.mostrarTrajetoria 
+          ? "DESATIVAR MIRA" 
+          : "ATIVAR MIRA";
+      }
+      
+      console.log("Trajetória Tracejada Visível:", this.mostrarTrajetoria);
     }
   },
 
@@ -57,6 +66,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
       this.forcaAtual = parseInt(e.key);
       this.forcaTotal = this.niveisForca[this.forcaAtual];
       this.atualizarHudVisual();
+      
       const novaCor = this.coresTrajetoria[this.forcaAtual];
       const componenteTrajetoria = this.el.components["trajetoria-previsao"];
       if (componenteTrajetoria) componenteTrajetoria.atualizarCor(novaCor);
@@ -67,18 +77,19 @@ AFRAME.registerComponent("mecanica-arremesso", {
     for (let i = 1; i <= 3; i++) {
       const btn = document.getElementById(`hud-btn-${i}`);
       if (!btn) continue;
+      
       if (i === this.forcaAtual) {
-        btn.style.border = `2px solid rgba(255,255,255, 1)`;
+        btn.style.border = `2px solid rgba(255, 255, 255, 1)`;
         btn.style.background = "rgba(255, 255, 255, 0.9)";
         btn.style.color = "black";
         btn.style.opacity = "1";
         btn.style.transform = "translateY(-3px) scale(1.1)";
-        btn.style.boxShadow = "0 0 10px rgba(255,255,255,0.5)";
+        btn.style.boxShadow = "0 0 15px rgba(255, 255, 255, 0.6)";
       } else {
         btn.style.border = "2px solid rgba(255, 255, 255, 0.2)";
-        btn.style.background = "rgba(255, 255, 255, 0.05)";
-        btn.style.color = "rgba(255, 255, 255, 0.4)";
-        btn.style.opacity = "1";
+        btn.style.background = "rgba(255, 255, 255, 0.1)";
+        btn.style.color = "rgba(255, 255, 255, 0.5)";
+        btn.style.opacity = "0.8";
         btn.style.transform = "translateY(0) scale(1)";
         btn.style.boxShadow = "none";
       }

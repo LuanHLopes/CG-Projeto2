@@ -33,7 +33,6 @@ AFRAME.registerComponent("trajetoria-previsao", {
   tick: function () {
     if (!this.compArremesso) return;
 
-    // Verifica se a mira está ativada ou desativada (Tecla M)
     if (!this.compArremesso.mostrarTrajetoria) {
       if (this.mostrando) {
         this.mostrando = false;

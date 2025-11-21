@@ -1,5 +1,17 @@
 window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 
+document.addEventListener("fullscreenchange", () => {
+  const txtFullscreen = document.getElementById("txt-fullscreen");
+  
+  if (txtFullscreen) {
+    if (document.fullscreenElement) {
+      txtFullscreen.innerText = "SAIR TELA CHEIA";
+    } else {
+      txtFullscreen.innerText = "TELA CHEIA";
+    }
+  }
+});
+
 window.addEventListener("keydown", (e) => {
   if (e.code === "F11") {
     e.preventDefault();
