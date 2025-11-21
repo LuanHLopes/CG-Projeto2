@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
@@ -9,14 +14,25 @@
 
     <script src="js/script.js"></script>
   </head>
+
   <body>
     <a-scene
       physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
     >
       <!-- CAMERA -->
-      <a-entity position="0 1.6 5">
-        <a-camera id="camera-jogador" look-controls="pointerLockEnabled: true">
+      <a-entity
+        id="rig-jogador"
+        position="0 0 5"
+        controle-pulo
+        movimento-fps="velocidade: 0.15"
+      >
+        <a-camera
+          id="camera-jogador"
+          position="0 3 0"
+          look-controls="pointerLockEnabled: true"
+          wasd-controls-enabled="false"
+        >
           <a-entity
             id="posicao-mao"
             position="0.35 -0.3 -0.6"
@@ -29,8 +45,8 @@
             cursor="fuse: false"
             raycaster="objects: .interativo; far: 4"
             position="0 0 -1"
-            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-            material="color: white; shader: flat; opacity: 0.8"
+            geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
+            material="color: white; shader: flat; opacity: 0.9"
             animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
           >
           </a-entity>
@@ -1103,23 +1119,129 @@
       <!-- FIM QUADRA DE BASQUETE B -->
 
       <!-- BOLA DE BASQUETE -->
-      <a-sphere
+      <a-gltf-model
         id="bola"
+        src="#modelo-bola"
         position="0 2 0"
+        color="#000"
         class="interativo"
-        color="#e65100"
-        radius="0.25"
+        rotation="0 0 0"
+        scale="0.0016 0.0016 0.0016"
         roughness="0.5"
         shadow="cast: true; receive: true"
         mecanica-arremesso
         trajetoria-previsao="pontos: 30; intervalo: 0.05; cor: red"
-        dynamic-body="shape: sphere; mass: 0.62; linearDamping: 0.01; angularDamping: 0.02"
         config-fisica="restituicao: 0.95; atrito: 0.5"
+        add-body-when-ready
       >
-      </a-sphere>
+      </a-gltf-model>
       <!-- FIM BOLA DE BASQUETE -->
 
       <a-sky color="#87CEEB"></a-sky>
     </a-scene>
+
+    <!-- HUB FORÇA DE ARREMEÇO -->
+    <div
+      id="hud-container"
+      style="
+        position: fixed;
+        bottom: 20px;
+        right: 100px;
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+        pointer-events: none;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-bottom: none;
+        border-radius: 15px 15px 0 0;
+        padding: 10px 15px 5px 15px;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.2),
+          rgba(0, 0, 0, 0)
+        ); 
+      "
+    >
+      <div
+        style="
+          font-family: 'Roboto', sans-serif;
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 12px;
+          letter-spacing: 1px;
+        "
+      >
+        FORÇA DE ARREMESSO
+      </div>
+
+      <div style="display: flex; gap: 10px">
+        <div
+          id="hud-btn-1"
+          style="
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.2s;
+          "
+        >
+          1
+        </div>
+
+        <div
+          id="hud-btn-2"
+          style="
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.2s;
+          "
+        >
+          2
+        </div>
+
+        <div
+          id="hud-btn-3"
+          style="
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.2s;
+          "
+        >
+          3
+        </div>
+      </div>
+    </div>
+    <!-- FIM HUB FORÇA DE ARREMEÇO -->
+     
   </body>
 </html>
