@@ -1,8 +1,8 @@
 import "./utils.js";
-import "./components/fisica.js";
-import "./components/movimento.js";
-import "./components/placar.js";
-import "./components/arremesso.js";
-import "./components/trajetoria.js";
+import "./scripts/fisica.js";
+import "./scripts/movimento.js";
+import "./scripts/placar.js";
+import "./scripts/arremesso.js";
+import "./scripts/trajetoria.js";
 
 console.log("Todos os scripts do jogo foram carregados!");
