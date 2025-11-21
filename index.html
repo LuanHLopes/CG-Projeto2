@@ -525,6 +525,16 @@
               static-body="shape: mesh;"
               config-fisica="restituicao: 0.5; atrito: 0.2"
             ></a-torus>
+
+            <a-cylinder
+              radius="0.28"
+              height="0.1"
+              position="0 3.1 1.6"
+              visible="false"
+              static-body="shape: cylinder"
+              sensor="id: 1"
+            >
+            </a-cylinder>
           </a-gltf-model>
           <!-- FIM DA CESTA -->
         </a-entity>
@@ -1052,6 +1062,16 @@
               static-body="shape: mesh;"
               config-fisica="restituicao: 0.5; atrito: 0.2"
             ></a-torus>
+
+            <a-cylinder
+              radius="0.28"
+              height="0.1"
+              position="0 3.1 1.6"
+              visible="false"
+              static-body="shape: cylinder"
+              sensor="id: 2"
+            >
+            </a-cylinder>
           </a-gltf-model>
           <!-- FIM DA CESTA -->
         </a-entity>
@@ -1420,5 +1440,31 @@
       </div>
     </div>
     <!-- FIM HUB MENU GERAL -->
+
+    <!-- DEBUG -->
+    <div
+      id="debug-placar"
+      style="
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.9);
+        border: 1px solid #00ff00;
+        padding: 10px;
+        font-family: 'Courier New', monospace;
+        color: #00ff00;
+        font-weight: bold;
+        font-size: 16px;
+        pointer-events: none;
+        user-select: none;
+      "
+    >
+      <div style="margin-bottom: 5px">DEBUG SCORE</div>
+      <div style="color: white">----------------</div>
+      <div>CESTA 1: <span id="txt-score-1" style="color: white">0</span></div>
+      <div>CESTA 2: <span id="txt-score-2" style="color: white">0</span></div>
+    </div>
+    <!-- FIM DEBUG -->
   </body>
 </html>

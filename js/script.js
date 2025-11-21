@@ -409,3 +409,52 @@ AFRAME.registerComponent("movimento-fps", {
     window.removeEventListener("keyup", this.onKeyUp);
   },
 });
+
+
+AFRAME.registerComponent('sensor', {
+  schema: {
+    id: {type: 'string', default: '1'}
+  },
+
+  init: function () {
+    this.ultimoPonto = 0;
+    this.detectar = this.detectar.bind(this);
+    
+    this.el.addEventListener('body-loaded', () => {
+        if (this.el.body) {
+            this.el.body.collisionResponse = 0; 
+        }
+    });
+
+    this.el.addEventListener('collide', this.detectar);
+  },
+
+  detectar: function (e) {
+    if (e.detail.body.el.id === 'bola') {
+      
+      const tempoAtual = Date.now();
+      
+      if (tempoAtual - this.ultimoPonto > 1000) {
+        this.registrarCesta();
+        this.ultimoPonto = tempoAtual;
+        
+        // DEBUG
+        this.el.setAttribute('material', 'color: #00FF00; opacity: 0.5; transparent: true; visible: true');
+
+        setTimeout(() => {
+            this.el.setAttribute('material', 'visible: false');
+        }, 200);
+      }
+    }
+  },
+
+  registrarCesta: function () {
+    const elementoTexto = document.getElementById(`txt-score-${this.data.id}`);
+    if (elementoTexto) {
+      let valorAtual = parseInt(elementoTexto.innerText);
+      valorAtual++;
+      elementoTexto.innerText = valorAtual;
+      console.log(`Cesta ${this.data.id} convertida!`);
+    }
+  }
+});
