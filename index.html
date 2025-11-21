@@ -11,25 +11,27 @@
   </head>
   <body>
     <a-scene
-      physics="debug: true; gravity: -20; restitution: 0.8; iterations: 20"
-      cursor="rayOrigin: mouse"
+      physics="debug: true; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
     >
       <!-- CAMERA -->
       <a-entity position="0 1.6 5">
-        <a-camera look-controls="pointerLockEnabled: false" wasd-controls>
+        <a-camera id="camera-jogador" look-controls="pointerLockEnabled: true">
           <a-entity
-            cursor="rayOrigin: mouse"
-            raycaster="objects: .interativo"
-            static-body="shape: sphere; sphereRadius: 0.001"
-            super-hands="colliderEvent: raycaster-intersection;
-                         colliderEventProperty: els;
-                         colliderEndEvent: raycaster-intersection-cleared;
-                         colliderEndEventProperty: clearedEls;
-                         grabStartButtons: mousedown;
-                         grabEndButtons: mouseup;
-                         dragDropStartButtons: mousedown;
-                         dragDropEndButtons: mouseup"
+            id="posicao-mao"
+            position="0.35 -0.3 -0.6"
+            rotation="-10 -10 0"
+          >
+            <a-box color="red" scale="0.05 0.05 0.05" visible="true"></a-box>
+          </a-entity>
+
+          <a-entity
+            cursor="fuse: false"
+            raycaster="objects: .interativo; far: 4"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+            material="color: white; shader: flat; opacity: 0.8"
+            animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
           >
           </a-entity>
         </a-camera>
@@ -40,6 +42,8 @@
       <a-assets>
         <a-asset-item id="modelo-cesta" src="assets/cesta.glb"></a-asset-item>
         <a-asset-item id="modelo-cerca" src="assets/cerca.glb"></a-asset-item>
+        <a-asset-item id="modelo-bola" src="assets/bola.glb"></a-asset-item>
+
         <img id="tex-cimento" src="assets/texturas/cimento.jpg" />
       </a-assets>
       <!-- FIM IMPORT ASSETS-->
@@ -65,7 +69,7 @@
           depth="16.325"
           height="1"
           position="0 -0.51 -1"
-          config-fisica="restituicao: 1; atrito: 0.5"
+          config-fisica="restituicao: 0.6; atrito: 0.6"
         >
         </a-box>
         <!-- FIM LATERAL QUADRA -->
@@ -469,7 +473,7 @@
             <a-box
               id="colisor-poste"
               static-body
-              visible="true"
+              visible="false"
               color="green"
               opacity="0.5"
               width="0.3"
@@ -483,7 +487,7 @@
             <a-box
               id="colisor-base-poste"
               static-body
-              visible="true"
+              visible="false"
               color="green"
               opacity="0.5"
               width="0.55"
@@ -593,7 +597,7 @@
           depth="16.325"
           height="1"
           position="0 -0.51 -1"
-          config-fisica="restituicao: 1; atrito: 0.5"
+          config-fisica="restituicao: 0.6; atrito: 0.6"
         >
         </a-box>
         <!-- FIM LATERAL QUADRA -->
@@ -997,7 +1001,7 @@
             <a-box
               id="colisor-poste"
               static-body
-              visible="true"
+              visible="false"
               color="green"
               opacity="0.5"
               width="0.3"
@@ -1011,7 +1015,7 @@
             <a-box
               id="colisor-base-poste"
               static-body
-              visible="true"
+              visible="false"
               color="green"
               opacity="0.5"
               width="0.55"
@@ -1101,23 +1105,19 @@
       <!-- FIM QUADRA DE BASQUETE B -->
 
       <!-- BOLA DE BASQUETE -->
-      <a-entity id="grupo-bola" position="0 2 3">
-        <a-sphere
-          id="bola"
-          class="interativo"
-          color="#e65100"
-          radius="0.25"
-          roughness="0.5"
-          shadow="cast: true; receive: true"
-          dynamic-body="shape: sphere; mass: 0.62; linearDamping: 0.0; angularDamping: 0.01"
-          config-fisica="restituicao: 0.5; atrito: 0.5"
-          hoverable
-          grabbable
-          draggable
-          droppable
-        >
-        </a-sphere>
-      </a-entity>
+      <a-sphere
+        id="bola"
+        position="0 2 3"
+        class="interativo"
+        color="#e65100"
+        radius="0.25"
+        roughness="0.5"
+        shadow="cast: true; receive: true"
+        mecanica-arremesso
+        dynamic-body="shape: sphere; mass: 0.62; linearDamping: 0.01; angularDamping: 0.02"
+        config-fisica="restituicao: 0.95; atrito: 0.5"
+      >
+      </a-sphere>
       <!-- FIM BOLA DE BASQUETE -->
 
       <a-sky color="#87CEEB"></a-sky>
