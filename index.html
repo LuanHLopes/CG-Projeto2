@@ -11,7 +11,7 @@
   </head>
   <body>
     <a-scene
-      physics="debug: true; gravity: -12; restitution: 0.5; iterations: 20"
+      physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
     >
       <!-- CAMERA -->
@@ -424,7 +424,6 @@
             theta-length="180"
             rotation="-90 0 0"
             position="0 0.01 7.1625"
-            w
             segments-theta="128"
           >
           </a-ring>
@@ -952,7 +951,6 @@
             theta-length="180"
             rotation="-90 0 0"
             position="0 0.01 7.1625"
-            w
             segments-theta="128"
           >
           </a-ring>
@@ -1114,6 +1112,7 @@
         roughness="0.5"
         shadow="cast: true; receive: true"
         mecanica-arremesso
+        trajetoria-previsao="pontos: 30; intervalo: 0.05; cor: red"
         dynamic-body="shape: sphere; mass: 0.62; linearDamping: 0.01; angularDamping: 0.02"
         config-fisica="restituicao: 0.95; atrito: 0.5"
       >

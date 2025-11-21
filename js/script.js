@@ -1,4 +1,5 @@
 // script.js - Configuração de propriedades físicas para entidades A-Frame usando Physijs
+
 AFRAME.registerComponent('config-fisica', {
   schema: {
     restituicao: { type: 'number', default: 0.5 },
@@ -14,6 +15,7 @@ AFRAME.registerComponent('config-fisica', {
     });
   }
 });
+
 
 AFRAME.registerComponent("add-body-when-ready", {
   init() {
@@ -37,9 +39,8 @@ AFRAME.registerComponent('mecanica-arremesso', {
     
     this.segurando = false;
     
-    // Configurações da Física (Parábola)
-    this.forcaFrente = 6;  // Força para frente
-    this.forcaCima = 6;    // Força para cima (gera o arco)
+    this.forcaFrente = 4; 
+    this.forcaCima = 7;   
 
     this.arremessar = this.arremessar.bind(this);
     this.pegar = this.pegar.bind(this);
@@ -48,7 +49,6 @@ AFRAME.registerComponent('mecanica-arremesso', {
   },
 
   tick: function () {
-    // Mantém a bola grudada na mão visualmente
     if (this.segurando && this.refMao) {
       this.refMao.object3D.updateMatrixWorld(true);
 
@@ -57,7 +57,6 @@ AFRAME.registerComponent('mecanica-arremesso', {
       this.refMao.object3D.getWorldPosition(posicaoMundialMao);
       this.refMao.object3D.getWorldQuaternion(rotacaoMundialMao);
 
-      // Ajustes de coordenadas locais/globais
       if (this.el.object3D.parent) {
         this.el.object3D.parent.worldToLocal(posicaoMundialMao.clone());
       }
@@ -69,7 +68,6 @@ AFRAME.registerComponent('mecanica-arremesso', {
          this.el.object3D.parent.worldToLocal(this.el.object3D.position);
       }
 
-      // Trava física enquanto segura
       if (this.el.body) {
         this.el.body.position.copy(posicaoMundialMao);
         this.el.body.quaternion.copy(rotacaoMundialMao);
@@ -102,27 +100,95 @@ AFRAME.registerComponent('mecanica-arremesso', {
     setTimeout(() => {
       if (!this.el.body) return;
       
-      // Zera movimentos anteriores
       this.el.body.velocity.set(0, 0, 0);
       this.el.body.angularVelocity.set(0, 0, 0);
 
-      // --- CÁLCULO DO IMPULSO (PARÁBOLA) ---
       var direcao = new THREE.Vector3(0, 0, -1);
       direcao.applyQuaternion(this.camera.object3D.quaternion);
       
-      // Remove inclinação vertical da câmera para controlar o arco manualmente
       direcao.y = 0; 
       direcao.normalize(); 
       
-      // Aplica força horizontal
       direcao.multiplyScalar(this.forcaFrente);
       
-      // Adiciona força vertical fixa para o arco
       direcao.y = this.forcaCima; 
 
       this.el.body.applyImpulse(direcao, new THREE.Vector3(0, 0, 0));
     }, 20);
 
     document.removeEventListener('mousedown', this.arremessar);
+  }
+});
+
+
+AFRAME.registerComponent("trajetoria-previsao", {
+  schema: {
+    pontos: {type: "int", default: 30},
+    intervalo: {type: "number", default: 0.1},
+    cor: {type: "string", default: "red"}
+  },
+
+  init: function () {
+    this.mostrando = false;
+    this.compArremesso = this.el.components["mecanica-arremesso"];
+    this.camera = document.getElementById("camera-jogador");
+
+    this.pontosEl = [];
+    for (let i = 0; i < this.data.pontos; i++) {
+      const p = document.createElement("a-entity");
+      p.setAttribute("geometry", "primitive: sphere; radius: 0.05");
+      p.setAttribute("material", `color: ${this.data.cor}`);
+      p.setAttribute("visible", "false");
+      this.el.sceneEl.appendChild(p);
+      this.pontosEl.push(p);
+    }
+  },
+
+  tick: function () {
+    if (!this.compArremesso) return;
+
+    const segurando = this.compArremesso.segurando;
+
+    if (segurando && !this.mostrando) this.mostrando = true;
+    if (!segurando && this.mostrando) {
+      this.mostrando = false;
+      this.pontosEl.forEach(p => p.setAttribute("visible", "false"));
+      return;
+    }
+
+    if (!this.mostrando) return;
+
+    const posInicial = this.el.object3D.position.clone();
+
+    let velocidade;
+
+    if (segurando) {
+      velocidade = new THREE.Vector3(0, 0, -1);
+      velocidade.applyQuaternion(this.camera.object3D.quaternion);
+      velocidade.normalize();  
+
+      velocidade.multiplyScalar(this.compArremesso.forcaFrente);
+
+      velocidade.y += this.compArremesso.forcaCima;
+
+    } else if (this.el.body) {
+      velocidade = this.el.body.velocity.clone();
+    } else {
+      return;
+    }
+
+    const g = -12;
+
+    for (let i = 0; i < this.data.pontos; i++) {
+      const t = i * this.data.intervalo;
+
+      const x = posInicial.x + velocidade.x * t;
+      const y = posInicial.y + velocidade.y * t + 0.5 * g * t * t;
+      const z = posInicial.z + velocidade.z * t;
+
+      const p = this.pontosEl[i];
+      p.setAttribute("position", `${x} ${y} ${z}`);
+      p.setAttribute("visible", "true");
+    }
   }
 });
