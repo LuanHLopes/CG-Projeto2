@@ -12,20 +12,21 @@
     <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
     <script src="https://unpkg.com/super-hands@3.0.3/dist/super-hands.min.js"></script>
 
-    <script src="js/script.js"></script>
+    <script type="module" src="js/script.js"></script>
   </head>
 
   <body>
     <a-scene
       physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
+      controle-placar
     >
       <!-- CAMERA -->
       <a-entity
         id="rig-jogador"
         position="0 0 5"
         controle-pulo
-        movimento-fps="velocidade: 0.15"
+        movimento-fps="velocidadeAndar: 0.10; velocidadeCorrer: 0.18"
       >
         <a-camera
           id="camera-jogador"
@@ -42,6 +43,7 @@
           </a-entity>
 
           <a-entity
+            id="cursor-mira"
             cursor="fuse: false"
             raycaster="objects: .interativo; far: 4"
             position="0 0 -1"
@@ -1310,11 +1312,43 @@
         <div
           style="
             color: rgba(255, 255, 255, 0.9);
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
+            text-transform: uppercase;
           "
         >
           Pegar Bola
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; width: 100%">
+        <div
+          style="
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+          "
+        >
+          R
+        </div>
+        <div
+          style="
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+          "
+        >
+          Resetar Placar
         </div>
       </div>
 
@@ -1335,16 +1369,48 @@
             background: rgba(255, 255, 255, 0.1);
           "
         >
-          Space
+          SPACE
         </div>
         <div
           style="
             color: rgba(255, 255, 255, 0.9);
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
+            text-transform: uppercase;
           "
         >
           Pular
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px; width: 100%">
+        <div
+          style="
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+          "
+        >
+          SHIFT
+        </div>
+        <div
+          style="
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+          "
+        >
+          Correr
         </div>
       </div>
 
@@ -1391,8 +1457,9 @@
           <div
             style="
               color: rgba(255, 255, 255, 0.9);
-              font-size: 15px;
+              font-size: 13px;
               font-weight: 500;
+              text-transform: uppercase;
             "
           >
             Arremessar
@@ -1430,11 +1497,43 @@
           <div
             style="
               color: rgba(255, 255, 255, 0.9);
-              font-size: 15px;
+              font-size: 13px;
               font-weight: 500;
+              text-transform: uppercase;
             "
           >
             Soltar
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; width: 100%">
+          <div
+            style="
+              width: 28px;
+              height: 28px;
+              flex-shrink: 0;
+              border-radius: 6px;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 14px;
+              font-weight: bold;
+              color: rgba(255, 255, 255, 0.9);
+              background: rgba(255, 255, 255, 0.1);
+            "
+          >
+            M
+          </div>
+          <div
+            style="
+              color: rgba(255, 255, 255, 0.9);
+              font-size: 13px;
+              font-weight: 500;
+              text-transform: uppercase;
+            "
+          >
+            Desativar Mira
           </div>
         </div>
       </div>
