@@ -51,7 +51,8 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.refMao = document.getElementById("posicao-mao");
     this.scene = document.querySelector("a-scene");
 
-    this.hudContainer = document.getElementById("hud-container");
+    this.hudContainer = document.getElementById("hud-container"); 
+    this.controlesBola = document.getElementById("controles-bola"); 
 
     this.segurando = false;
 
@@ -60,35 +61,42 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
     this.forcaAtual = 2;
     this.forcaTotal = this.niveisForca[2];
-
     this.ajudaVertical = 0.45;
     this.massaBola = 0.62;
 
     this.processarAcao = this.processarAcao.bind(this);
     this.pegar = this.pegar.bind(this);
     this.mudarForca = this.mudarForca.bind(this);
+    this.invocarBola = this.invocarBola.bind(this);
 
     this.el.addEventListener("click", this.pegar);
     window.addEventListener("keydown", this.mudarForca);
+    window.addEventListener("keydown", this.invocarBola);
     window.addEventListener("contextmenu", (e) => e.preventDefault());
 
     this.atualizarHudVisual();
   },
 
+  invocarBola: function (e) {
+    if (e.code === "KeyP") {
+      if (this.segurando) return;
+      if (this.el.body) {
+        this.el.body.velocity.set(0, 0, 0);
+        this.el.body.angularVelocity.set(0, 0, 0);
+      }
+      this.pegar();
+    }
+  },
+
   mudarForca: function (e) {
     if (!this.segurando) return;
-
     if (["1", "2", "3"].includes(e.key)) {
       this.forcaAtual = parseInt(e.key);
       this.forcaTotal = this.niveisForca[this.forcaAtual];
-
       this.atualizarHudVisual();
-
       const novaCor = this.coresTrajetoria[this.forcaAtual];
       const componenteTrajetoria = this.el.components["trajetoria-previsao"];
-      if (componenteTrajetoria) {
-        componenteTrajetoria.atualizarCor(novaCor);
-      }
+      if (componenteTrajetoria) componenteTrajetoria.atualizarCor(novaCor);
     }
   },
 
@@ -96,10 +104,9 @@ AFRAME.registerComponent("mecanica-arremesso", {
     for (let i = 1; i <= 3; i++) {
       const btn = document.getElementById(`hud-btn-${i}`);
       if (!btn) continue;
-
       if (i === this.forcaAtual) {
         btn.style.border = `2px solid rgba(255,255,255, 1)`;
-        btn.style.background = "rgba(255, 255, 255, 0.5)";
+        btn.style.background = "rgba(255, 255, 255, 0.9)";
         btn.style.color = "black";
         btn.style.opacity = "1";
         btn.style.transform = "translateY(-3px) scale(1.1)";
@@ -143,10 +150,10 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.el.classList.remove("interativo");
     this.segurando = true;
 
-    // MOSTRAR O HUD (Display Flex)
+    // MOSTRAR HUDs
     if (this.hudContainer) this.hudContainer.style.display = "flex";
+    if (this.controlesBola) this.controlesBola.style.display = "flex"; // <--- Mostra mouse
 
-    // Atualiza a cor da trajetória imediatamente ao pegar
     const corAtual = this.coresTrajetoria[this.forcaAtual];
     const componenteTrajetoria = this.el.components["trajetoria-previsao"];
     if (componenteTrajetoria) componenteTrajetoria.atualizarCor(corAtual);
@@ -196,7 +203,9 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.segurando = false;
     this.el.classList.add("interativo");
 
+    // ESCONDER HUDs
     if (this.hudContainer) this.hudContainer.style.display = "none";
+    if (this.controlesBola) this.controlesBola.style.display = "none"; // <--- Esconde mouse
 
     this.el.setAttribute(
       "dynamic-body",
