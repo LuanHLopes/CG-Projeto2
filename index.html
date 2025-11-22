@@ -131,6 +131,14 @@
         <a-asset-item id="modelo-cesta" src="./assets/cesta.glb"></a-asset-item>
         <a-asset-item id="modelo-cerca" src="./assets/cerca.glb"></a-asset-item>
         <a-asset-item id="modelo-bola" src="./assets/bola.glb"></a-asset-item>
+        <a-asset-item
+          id="modelo-placar"
+          src="./assets/placar.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="modelo-painel"
+          src="./assets/painel.glb"
+        ></a-asset-item>
 
         <img id="tex-cimento" src="./assets/texturas/cimento.jpg" />
       </a-assets>
@@ -1232,6 +1240,85 @@
       >
       </a-gltf-model>
       <!-- FIM BOLA DE BASQUETE -->
+
+      <!-- PAINEL DE LED -->
+      <a-gltf-model
+        src="#modelo-painel"
+        position="11.5 0 -2.6"
+        rotation="0 -90 0"
+        scale="0.045 0.045 0.045"
+      ></a-gltf-model>
+      <!-- FIM PAINEL DE LED -->
+
+      <!-- PLACAR -->
+      <a-gltf-model
+        id="placar-principal"
+        src="#modelo-placar"
+        position="5.1 -3.9 -3.1"
+        rotation="0 -90 0"
+        scale="0.75 0.75 0.75"
+      >
+        <a-entity id="grupo-tempo" position="4.23 12.674 -8.7">
+          <a-entity
+            digito-led="tamanho: 2.1; espessura: 0.04; corInativa: red"
+            position="-0.65 0 0"
+          ></a-entity>
+          <a-entity
+            digito-led="tamanho: 2.1; espessura: 0.04; corInativa: red"
+            position="-0.25 0 0"
+          ></a-entity>
+
+          <a-entity position="0.1 0.04 0" scale="1.5 1.5 1">
+            <a-plane
+              color="red"
+              width="0.04"
+              height="0.04"
+              position="0 0.05 0"
+              side="double"
+            ></a-plane>
+            <a-plane
+              color="red"
+              width="0.04"
+              height="0.04"
+              position="0 -0.1 0"
+              side="double"
+            ></a-plane>
+          </a-entity>
+
+          <a-entity
+            digito-led="tamanho: 2.1; espessura: 0.04; corInativa: red"
+            position="0.45 0 0"
+          ></a-entity>
+          <a-entity
+            digito-led="tamanho: 2.1; espessura: 0.04; corInativa: red"
+            position="0.85 0 0"
+          ></a-entity>
+        </a-entity>
+
+        <a-entity id="grupo-home" position="2.424 10.01 -8.7">
+          <a-entity
+            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: red"
+            position="-0.58 0 0"
+          ></a-entity>
+          <a-entity
+            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: red"
+            position="0.45 0 0"
+          ></a-entity>
+        </a-entity>
+
+        <a-entity id="grupo-guest" position="6.305 10.01 -8.7">
+          <a-entity
+            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: red"
+            position="-0.58 0 0"
+          ></a-entity
+          >w
+          <a-entity
+            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: red"
+            position="0.45 0 0"
+          ></a-entity>
+        </a-entity>
+      </a-gltf-model>
+      <!-- FIM PLACAR -->
 
       <a-sky color="#87CEEB"></a-sky>
     </a-scene>

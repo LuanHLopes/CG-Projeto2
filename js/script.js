@@ -4,6 +4,8 @@ import "./scripts/movimento.js";
 import "./scripts/placar.js";
 import "./scripts/trajetoria.js";
 import "./scripts/arremesso.js";
+import "./scripts/placar-render.js";
 import "./scripts/loader.js";
+
 
 console.log("Todos os scripts do jogo foram carregados!");
