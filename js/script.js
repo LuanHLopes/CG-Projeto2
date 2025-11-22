@@ -5,6 +5,7 @@ import "./scripts/placar.js";
 import "./scripts/trajetoria.js";
 import "./scripts/arremesso.js";
 import "./scripts/placar-render.js";
+import "./scripts/timer.js";
 import "./scripts/loader.js";
 
 

@@ -13,7 +13,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.mostrarTrajetoria = true;
 
     this.coresTrajetoria = { 1: "#00FF00", 2: "#FFFF00", 3: "#FF0000" };
-    this.niveisForca = { 1: 4, 2: 8, 3: 12 };
+    this.niveisForca = { 1: 6, 2: 8, 3: 12 };
 
     this.forcaAtual = 2;
     this.forcaTotal = this.niveisForca[2];

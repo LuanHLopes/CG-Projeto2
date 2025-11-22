@@ -1,0 +1,15 @@
+.hud-segmento {
+  display: block;
+  width: 29px;       
+  height: 29px;
+  font-family: 'Electrolize', 'Orbitron', 'Roboto Mono', monospace;
+  font-weight: 900;
+  color: red;
+  font-size: 1.8em;    
+  line-height: 1.0;
+  background: transparent;
+  letter-spacing: -3px; 
+  user-select: none;
+  margin: 0;
+  padding: 0;
+}
