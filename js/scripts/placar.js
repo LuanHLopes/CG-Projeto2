@@ -43,8 +43,35 @@ AFRAME.registerComponent("sensor", {
     if (elementoTexto) {
       let valorAtual = parseInt(elementoTexto.innerText);
       valorAtual++;
+      if (valorAtual > 99) {
+        valorAtual = 0;
+      }
       elementoTexto.innerText = valorAtual;
       console.log(`Cesta ${this.data.id} convertida!`);
+
+      if (this.data.id === "1") {
+        const grupoHome = document.querySelector("#grupo-home");
+        if (grupoHome) {
+          const digitos = grupoHome.querySelectorAll("[digito-led]");
+          const dezena = Math.floor(valorAtual / 10);
+          const unidade = valorAtual % 10;
+          if (digitos[0]) digitos[0].components["digito-led"].setNumero(dezena);
+          if (digitos[1])
+            digitos[1].components["digito-led"].setNumero(unidade);
+        }
+      }
+
+      if (this.data.id === "2") {
+        const grupoGuest = document.querySelector("#grupo-guest");
+        if (grupoGuest) {
+          const digitos = grupoGuest.querySelectorAll("[digito-led]");
+          const dezena = Math.floor(valorAtual / 10);
+          const unidade = valorAtual % 10;
+          if (digitos[0]) digitos[0].components["digito-led"].setNumero(dezena);
+          if (digitos[1])
+            digitos[1].components["digito-led"].setNumero(unidade);
+        }
+      }
     }
   },
 });
@@ -59,12 +86,24 @@ AFRAME.registerComponent("controle-placar", {
     if (e.code === "KeyR") {
       const score1 = document.getElementById("txt-score-1");
       const score2 = document.getElementById("txt-score-2");
-
       if (score1) score1.innerText = "0";
       if (score2) score2.innerText = "0";
 
-      console.log("Placar Resetado pelo Jogador!");
+      const grupoHome = document.querySelector("#grupo-home");
+      if (grupoHome) {
+        const digitos = grupoHome.querySelectorAll("[digito-led]");
+        if (digitos[0]) digitos[0].components["digito-led"].setNumero(0);
+        if (digitos[1]) digitos[1].components["digito-led"].setNumero(0);
+      }
 
+      const grupoGuest = document.querySelector("#grupo-guest");
+      if (grupoGuest) {
+        const digitos = grupoGuest.querySelectorAll("[digito-led]");
+        if (digitos[0]) digitos[0].components["digito-led"].setNumero(0);
+        if (digitos[1]) digitos[1].components["digito-led"].setNumero(0);
+      }
+
+      console.log("Placar Resetado pelo Jogador!");
       const debugDiv = document.getElementById("debug-placar");
       if (debugDiv) {
         debugDiv.style.borderColor = "red";
