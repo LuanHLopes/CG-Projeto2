@@ -16,10 +16,70 @@
   </head>
 
   <body>
+    <!--- TELA DE CARREGAMENTO -->
+    <div id="tela-loading">
+      <div class="conteudo-loading">
+        <h1>CARREGANDO JOGO</h1>
+        <div class="spinner"></div>
+        <p>Preparando a quadra...</p>
+      </div>
+    </div>
+
+    <style>
+      #tela-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #1a1a1a;
+        z-index: 99999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 1s ease-out;
+      }
+
+      #tela-loading.esconder {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .conteudo-loading {
+        text-align: center;
+        font-family: "Roboto", sans-serif;
+        color: white;
+      }
+
+      h1 {
+        font-size: 24px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin: 0 auto 20px auto;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <!-- FIM TELA DE CARREGAMENTO -->
+
     <a-scene
       physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
       controle-placar
+      tela-loading
       vr-mode-ui="enabled: false"
     >
       <!-- CAMERA -->

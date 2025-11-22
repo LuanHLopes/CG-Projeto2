@@ -107,6 +107,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
         this.el.object3D.parent.worldToLocal(pos.clone());
       this.el.object3D.position.copy(pos);
       this.el.object3D.quaternion.copy(rot);
+      this.el.object3D.rotateY(Math.PI / 2); 
       if (this.el.body) {
         this.el.body.position.copy(pos);
         this.el.body.quaternion.copy(rot);
