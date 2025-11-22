@@ -95,6 +95,7 @@
       controle-placar
       tela-loading
       vr-mode-ui="enabled: false"
+      debug-zonas="ativado: true"
     >
       <!-- CAMERA -->
       <a-entity
@@ -486,34 +487,51 @@
           <!-- FIM GARRAFÃO-->
 
           <!-- MEIA LUA -->
-          <a-ring
-            color="white"
-            radius-inner="7.215"
-            radius-outer="7.265"
-            theta-start="0"
-            theta-length="180"
-            rotation="-90 180 0"
-            position="0 0.01 -5.5875"
-            scale="0.9 1 1"
-            segments-theta="128"
-          >
-          </a-ring>
+          <a-entity id="zona-3pts-1">
+            <a-ring
+              id="linha-3-a"
+              color="white"
+              radius-inner="7.215"
+              radius-outer="7.265"
+              theta-start="0"
+              theta-length="180"
+              rotation="-90 180 0"
+              position="0 0.01 -5.5875"
+              scale="0.9 1 1"
+              segments-theta="128"
+              class="molde-geometria"
+            >
+            </a-ring>
 
-          <a-plane
-            color="white"
-            width="0.046"
-            height="1.575"
-            rotation="-90 0 0"
-            position="-6.517 0.01 -6.375"
-          ></a-plane>
+            <a-plane
+              color="white"
+              width="0.046"
+              height="1.575"
+              rotation="-90 0 0"
+              position="-6.517 0.01 -6.375"
+              class="molde-geometria"
+            >
+            </a-plane>
 
-          <a-plane
-            color="white"
-            width="0.046"
-            height="1.575"
-            rotation="-90 0 0"
-            position="6.517 0.01 -6.375"
-          ></a-plane>
+            <a-plane
+              color="white"
+              width="0.046"
+              height="1.575"
+              rotation="-90 0 0"
+              position="6.517 0.01 -6.375"
+              class="molde-geometria"
+            >
+            </a-plane>
+            <a-plane
+              color="white"
+              width="13.08"
+              height="0.046"
+              rotation="-90 0 0"
+              position="0 0.01 -7.1625"
+              class="molde-geometria"
+            >
+            </a-plane>
+          </a-entity>
           <!-- FIM MEIA LUA -->
 
           <!-- CIRCULO CENTRAL -->
@@ -612,10 +630,20 @@
             ></a-torus>
 
             <a-cylinder
-              radius="0.28"
+              radius="0.20"
+              height="0.05"
+              position="0 3.18 1.6"
+              visible="true"
+              static-body="shape: cylinder"
+              sensor-boca
+            >
+            </a-cylinder>
+
+            <a-cylinder
+              radius="0.15"
               height="0.1"
-              position="0 3.07 1.6"
-              visible="false"
+              position="0 3.05 1.6"
+              visible="true"
               static-body="shape: cylinder"
               sensor="id: 1"
             >
@@ -1028,34 +1056,51 @@
           <!-- FIM GARRAFÃO-->
 
           <!-- MEIA LUA -->
-          <a-ring
-            color="white"
-            radius-inner="7.215"
-            radius-outer="7.265"
-            theta-start="0"
-            theta-length="180"
-            rotation="-90 180 0"
-            position="0 0.01 -5.5875"
-            scale="0.9 1 1"
-            segments-theta="128"
-          >
-          </a-ring>
+          <a-entity id="zona-3pts-2">
+            <a-ring
+              id="linha-3-b"
+              color="white"
+              radius-inner="7.215"
+              radius-outer="7.265"
+              theta-start="0"
+              theta-length="180"
+              rotation="-90 180 0"
+              position="0 0.01 -5.5875"
+              scale="0.9 1 1"
+              segments-theta="128"
+              class="molde-geometria"
+            >
+            </a-ring>
 
-          <a-plane
-            color="white"
-            width="0.046"
-            height="1.575"
-            rotation="-90 0 0"
-            position="-6.517 0.01 -6.375"
-          ></a-plane>
+            <a-plane
+              color="white"
+              width="0.046"
+              height="1.575"
+              rotation="-90 0 0"
+              position="-6.517 0.01 -6.375"
+              class="molde-geometria"
+            >
+            </a-plane>
 
-          <a-plane
-            color="white"
-            width="0.046"
-            height="1.575"
-            rotation="-90 0 0"
-            position="6.517 0.01 -6.375"
-          ></a-plane>
+            <a-plane
+              color="white"
+              width="0.046"
+              height="1.575"
+              rotation="-90 0 0"
+              position="6.517 0.01 -6.375"
+              class="molde-geometria"
+            >
+            </a-plane>
+            <a-plane
+              color="white"
+              width="13.08"
+              height="0.046"
+              rotation="-90 0 0"
+              position="0 0.01 -7.1625"
+              class="molde-geometria"
+            >
+            </a-plane>
+          </a-entity>
           <!-- FIM MEIA LUA -->
 
           <!-- CIRCULO CENTRAL -->
@@ -1154,10 +1199,20 @@
             ></a-torus>
 
             <a-cylinder
-              radius="0.28"
+              radius="0.20"
+              height="0.05"
+              position="0 3.18 1.6"
+              visible="true"
+              static-body="shape: cylinder"
+              sensor-boca
+            >
+            </a-cylinder>
+
+            <a-cylinder
+              radius="0.15"
               height="0.1"
-              position="0 3.07 1.6"
-              visible="false"
+              position="0 3.05 1.6"
+              visible="true"
               static-body="shape: cylinder"
               sensor="id: 2"
             >
@@ -1376,7 +1431,7 @@
 
     <!-- HUD FORÇA DE ARREMEÇO -->
     <div
-      id="hud-container"
+      id="hud-force-container"
       style="
         position: fixed;
         bottom: 20px;
