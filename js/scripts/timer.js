@@ -86,7 +86,7 @@ AFRAME.registerComponent("cronometro-tempo", {
       
       let count = 0;
       const maxToggles = 6;
-      const velocidadePisca = 300; 
+      const velocidadePisca = 400; 
 
       this.hudTopo.style.visibility = 'visible';
 
