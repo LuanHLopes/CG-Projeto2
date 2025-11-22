@@ -13,24 +13,3 @@ AFRAME.registerComponent("config-fisica", {
     });
   },
 });
-
-AFRAME.registerComponent("add-body-when-ready", {
-  init() {
-    this.el.addEventListener("model-loaded", () => {
-      this.el.setAttribute("dynamic-body", {
-        shape: "sphere",
-        mass: 0.62,
-        linearDamping: 0.01,
-        angularDamping: 0.02,
-      });
-
-      setTimeout(() => {
-        if (this.el.body) {
-          this.el.body.updateMassProperties();
-          this.el.body.wakeUp();
-          this.el.body.position.y += 0.001;
-        }
-      }, 50);
-    });
-  },
-});

@@ -16,12 +16,11 @@
   </head>
 
   <body>
-    <!--- TELA DE CARREGAMENTO -->
     <div id="tela-loading">
       <div class="conteudo-loading">
-        <h1>CARREGANDO JOGO</h1>
-        <div class="spinner"></div>
-        <p>Preparando a quadra...</p>
+        <h1>BASKETBALL.IO</h1>
+        <div class="basketball-spinner"></div>
+        <p>Renderizando quadra</p>
       </div>
     </div>
 
@@ -57,13 +56,23 @@
         margin-bottom: 20px;
       }
 
-      .spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid rgba(255, 255, 255, 0.3);
+      p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .basketball-spinner {
+        width: 60px;
+        height: 60px;
+        background-color: #ff8000;
         border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 1s ease-in-out infinite;
+        border: 2px solid #000;
+
+        box-shadow: inset 0 0 0 2px #000, inset 2px 2px 0 2px #000,
+          inset -2px -2px 0 2px #000;
+
+        animation: spin 1s linear infinite;
         margin: 0 auto 20px auto;
       }
 
@@ -1205,7 +1214,7 @@
       <a-gltf-model
         id="bola"
         src="#modelo-bola"
-        position="0 2 0"
+        position="0 0.31 0"
         color="#000"
         class="interativo"
         rotation="0 0 0"
@@ -1215,7 +1224,6 @@
         mecanica-arremesso
         trajetoria-previsao="pontos: 30; intervalo: 0.05; cor: red"
         config-fisica="restituicao: 0.95; atrito: 0.5"
-        
       >
       </a-gltf-model>
       <!-- FIM BOLA DE BASQUETE -->
