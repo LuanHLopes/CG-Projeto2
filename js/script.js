@@ -9,5 +9,4 @@ import "./scripts/timer.js";
 import "./scripts/debug-zonas.js";
 import "./scripts/loader.js";
 
-
 console.log("Todos os scripts do jogo foram carregados!");

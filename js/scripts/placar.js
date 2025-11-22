@@ -7,13 +7,9 @@ AFRAME.registerComponent("sensor-boca", {
     this.el.addEventListener("collide", (e) => {
       if (e.detail.body.el.id === "bola") {
         const bola = e.detail.body.el;
-
-        if (!bola.object3D) return;
-        if (!bola.object3D.userData) {
-          bola.object3D.userData = {};
-        }
-
         if (e.detail.body.velocity.y < 0) {
+          if (!bola.object3D.userData) bola.object3D.userData = {};
+
           bola.object3D.userData.entrouNoAro = true;
           bola.object3D.userData.tempoEntrada = Date.now();
         }
@@ -40,7 +36,6 @@ AFRAME.registerComponent("sensor", {
       const tempoAtual = Date.now();
 
       if (!bolaEl.object3D) return;
-
       const dadosBola = bolaEl.object3D.userData || {};
 
       if (dadosBola.jaPontou) return;
@@ -54,7 +49,6 @@ AFRAME.registerComponent("sensor", {
 
       if (e.detail.body.velocity.y < 0) {
         if (!bolaEl.object3D.userData) bolaEl.object3D.userData = {};
-
         bolaEl.object3D.userData.jaPontou = true;
         bolaEl.object3D.userData.entrouNoAro = false;
 
@@ -91,7 +85,7 @@ AFRAME.registerComponent("sensor", {
 
     if (linhaElement) {
       let raioLimite = parseFloat(linhaElement.getAttribute("radius-outer"));
-      if (isNaN(raioLimite)) raioLimite = 7.25;
+      if (isNaN(raioLimite)) raioLimite = 7.265;
 
       const pontoArremesso = new THREE.Vector3(origem.x, origem.y, origem.z);
       linhaElement.object3D.worldToLocal(pontoArremesso);
@@ -100,30 +94,34 @@ AFRAME.registerComponent("sensor", {
         pontoArremesso.x ** 2 + pontoArremesso.y ** 2
       );
 
-      if (distanciaDoCentro > raioLimite) {
+      if (distanciaDoCentro > raioLimite || Math.abs(pontoArremesso.x) > 7.2) {
         pontos = 3;
       }
-
-      if (Math.abs(pontoArremesso.x) > 7.2) {
-        pontos = 3;
-      }
-
       console.log(`Cesta ${this.data.id} | Pontos: ${pontos}`);
     } else {
-      console.error(`ERRO CRÍTICO: Elemento ${idLinha} não encontrado!`);
+      console.warn("Linha de referência não encontrada. Usando 2 pontos.");
     }
 
-    const elementoTexto = document.getElementById(`txt-score-${this.data.id}`);
-    if (elementoTexto) {
-      let valorAtual = parseInt(elementoTexto.innerText);
-      valorAtual += pontos;
-      if (valorAtual > 999) valorAtual = 0;
-      elementoTexto.innerText = valorAtual;
+    const idHud = this.data.id === "1" ? "score-top-home" : "score-top-guest";
+    const idGrupo3D = this.data.id === "1" ? "#grupo-home" : "#grupo-guest";
 
-      const seletorGrupo =
-        this.data.id === "1" ? "#grupo-home" : "#grupo-guest";
-      this.atualizarLed(seletorGrupo, valorAtual);
+    const hudElement = document.getElementById(idHud);
+    let novoValor = 0;
+
+    if (hudElement) {
+      let valorAtual = parseInt(hudElement.innerText);
+      if (isNaN(valorAtual)) valorAtual = 0;
+
+      novoValor = valorAtual + pontos;
+      if (novoValor > 999) novoValor = 0;
+
+      hudElement.innerText = novoValor < 10 ? "0" + novoValor : novoValor;
     }
+
+    this.atualizarLed(idGrupo3D, novoValor);
+
+    const debugElement = document.getElementById(`txt-score-${this.data.id}`);
+    if (debugElement) debugElement.innerText = novoValor;
   },
 
   atualizarLed: function (selectorId, valor) {
@@ -132,8 +130,11 @@ AFRAME.registerComponent("sensor", {
       const digitos = grupo.querySelectorAll("[digito-led]");
       const dezena = Math.floor((valor % 100) / 10);
       const unidade = valor % 10;
-      if (digitos[0]) digitos[0].components["digito-led"].setNumero(dezena);
-      if (digitos[1]) digitos[1].components["digito-led"].setNumero(unidade);
+
+      if (digitos[0] && digitos[0].components["digito-led"])
+        digitos[0].components["digito-led"].setNumero(dezena);
+      if (digitos[1] && digitos[1].components["digito-led"])
+        digitos[1].components["digito-led"].setNumero(unidade);
     }
   },
 });
@@ -145,19 +146,28 @@ AFRAME.registerComponent("controle-placar", {
   },
   resetar: function (e) {
     if (e.code === "KeyR") {
+      const hudH = document.getElementById("score-top-home");
+      const hudG = document.getElementById("score-top-guest");
+      if (hudH) hudH.innerText = "00";
+      if (hudG) hudG.innerText = "00";
+
       const s1 = document.getElementById("txt-score-1");
       const s2 = document.getElementById("txt-score-2");
       if (s1) s1.innerText = "0";
       if (s2) s2.innerText = "0";
+
       const resetLed = (sel) => {
         const g = document.querySelector(sel);
         if (g)
-          g.querySelectorAll("[digito-led]").forEach((d) =>
-            d.components["digito-led"].setNumero(0)
-          );
+          g.querySelectorAll("[digito-led]").forEach((d) => {
+            if (d.components["digito-led"])
+              d.components["digito-led"].setNumero(0);
+          });
       };
       resetLed("#grupo-home");
       resetLed("#grupo-guest");
+
+      console.log("Placar Resetado!");
     }
   },
   remove: function () {

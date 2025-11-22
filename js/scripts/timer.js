@@ -1,18 +1,13 @@
-// cronometro-tempo.js
-
 AFRAME.registerComponent("cronometro-tempo", {
   schema: {
     rodando: { type: "boolean", default: false },
-    tempoInicial: { type: "int", default: 90 }, // segundos iniciais
+    tempoInicial: { type: "int", default: 90 }, 
   },
 
   init: function () {
     this.restanteMs = this.data.tempoInicial * 1000;
     this.lastTick = null;
-    this.piscando = false;
-    this.piscaInterval = null;
-
-    // Referências aos dígitos do display LED da cena
+    
     this.digitos = {
       sdez: document.getElementById("cron-s-dezena"),
       sun: document.getElementById("cron-s-unidade"),
@@ -20,152 +15,92 @@ AFRAME.registerComponent("cronometro-tempo", {
       msun: document.getElementById("cron-ms-unidade"),
     };
 
-    this.setDisplay(this.data.tempoInicial, 0);
+    this.hudTopo = document.getElementById("timer-top-display");
 
-    // HUD no canto esquerdo
-    this.hudSdez = document.getElementById("hud-cron-sdez");
-    this.hudSun = document.getElementById("hud-cron-sun");
-    this.hudMsdez = document.getElementById("hud-cron-msdez");
-    this.hudMsun = document.getElementById("hud-cron-msun");
-    this.hudBox = document.getElementById("hud-cronometro");
-    this.hideHud();
+    this.atualizarVisuais(this.data.tempoInicial, 0);
 
-    // Métodos globais para controle externo
     window.iniciarCronometro = this.iniciarCronometro.bind(this);
     window.pararCronometro = this.pararCronometro.bind(this);
     window.zerarCronometro = this.zerarCronometro.bind(this);
-    window.setarTempoCronometro = this.setarTempo.bind(this);
   },
 
   tick: function (time, dt) {
-    if (!this.data.rodando) return;
+    if (!this.data.rodando) {
+        this.lastTick = null; 
+        return;
+    }
 
     if (this.lastTick === null) this.lastTick = time;
-    const elapsed = time - this.lastTick;
+    const elapsed = time - this.lastTick; 
     this.lastTick = time;
+    
     this.restanteMs -= elapsed;
 
     if (this.restanteMs <= 0) {
       this.restanteMs = 0;
       this.data.rodando = false;
+      this.blinkHud(); 
     }
 
     const segundos = Math.floor(this.restanteMs / 1000);
     const centesimos = Math.floor((this.restanteMs % 1000) / 10);
 
-    this.setDisplay(segundos, centesimos);
-    this.updateHud(segundos, centesimos);
+    this.atualizarVisuais(segundos, centesimos);
+  },
 
-    // Lógica para início da piscada
-    if (
-      !this.data.rodando &&
-      segundos === 0 &&
-      centesimos === 0 &&
-      !this.piscando
-    ) {
-      this.startHudBlink();
-    } else if ((segundos > 0 || centesimos > 0) && this.piscando) {
-      this.stopHudBlink();
+  atualizarVisuais: function (segundos, centesimos) {
+    
+    if (this.digitos.sdez) this.digitos.sdez.components["digito-led"].setNumero(Math.floor(segundos / 10));
+    if (this.digitos.sun) this.digitos.sun.components["digito-led"].setNumero(segundos % 10);
+    if (this.digitos.msdez) this.digitos.msdez.components["digito-led"].setNumero(Math.floor(centesimos / 10));
+    if (this.digitos.msun) this.digitos.msun.components["digito-led"].setNumero(centesimos % 10);
+
+    if (this.hudTopo) {
+        const sStr = segundos < 10 ? "0" + segundos : segundos;
+        const msStr = centesimos < 10 ? "0" + centesimos : centesimos;
+        
+        this.hudTopo.innerText = `${sStr}:${msStr}`;
+        
+        if (segundos < 10) {
+            this.hudTopo.style.color = "#ff3333";
+            this.hudTopo.style.textShadow = "0 0 15px rgba(255, 0, 0, 0.8)";
+        } else {
+            this.hudTopo.style.color = "#ff4444";
+            this.hudTopo.style.textShadow = "0 0 10px rgba(255, 0, 0, 0.5)";
+        }
     }
   },
 
-  setDisplay: function (segundos, centesimos) {
-    // Atualiza o placar LED do painel do jogo
-    if (this.digitos.sdez)
-      this.digitos.sdez.components["digito-led"].setNumero(
-        Math.floor(segundos / 10)
-      );
-    if (this.digitos.sun)
-      this.digitos.sun.components["digito-led"].setNumero(segundos % 10);
-    if (this.digitos.msdez)
-      this.digitos.msdez.components["digito-led"].setNumero(
-        Math.floor(centesimos / 10)
-      );
-    if (this.digitos.msun)
-      this.digitos.msun.components["digito-led"].setNumero(centesimos % 10);
-  },
-
-  updateHud: function (segundos, centesimos) {
-    // Atualiza o HUD lateral
-    if (
-      this.hudSdez &&
-      this.hudSun &&
-      this.hudMsdez &&
-      this.hudMsun &&
-      this.hudBox
-    ) {
-      this.hudSdez.innerText = Math.floor(segundos / 10);
-      this.hudSun.innerText = segundos % 10;
-      this.hudMsdez.innerText = Math.floor(centesimos / 10);
-      this.hudMsun.innerText = centesimos % 10;
-      this.hudBox.style.opacity = "1";
-      this.hudBox.style.display = "flex";
-    }
-  },
-
-  hideHud: function () {
-    if (this.hudBox) this.hudBox.style.display = "none";
-  },
-
-  startHudBlink: function () {
-    this.piscando = true;
-    let visible = true;
-    if (this.hudBox) {
-      this.piscaInterval = setInterval(() => {
-        this.hudBox.style.opacity = visible ? "1" : "0.3";
-        visible = !visible;
-      }, 350);
-    }
-  },
-
-  stopHudBlink: function () {
-    this.piscando = false;
-    if (this.piscaInterval) {
-      clearInterval(this.piscaInterval);
-      this.piscaInterval = null;
-    }
-    if (this.hudBox) this.hudBox.style.opacity = "1";
+  blinkHud: function() {
+      if(!this.hudTopo) return;
+      let count = 0;
+      const interval = setInterval(() => {
+          this.hudTopo.style.visibility = (this.hudTopo.style.visibility === 'hidden' ? 'visible' : 'hidden');
+          count++;
+          if(count > 6) {
+              clearInterval(interval);
+              this.hudTopo.style.visibility = 'visible';
+          }
+      }, 300);
   },
 
   iniciarCronometro: function () {
-    if (!this.data.rodando && this.restanteMs > 0) {
-      this.data.rodando = true;
-      this.lastTick = null;
-      this.hideHud();
-      this.updateHud(
-        Math.floor(this.restanteMs / 1000),
-        Math.floor((this.restanteMs % 1000) / 10)
-      );
-      if (this.piscando) this.stopHudBlink();
+    if (this.restanteMs > 0) {
+        this.data.rodando = true;
+        this.lastTick = null;
     }
   },
 
   pararCronometro: function () {
-    if (this.data.rodando) {
-      this.data.rodando = false;
-    }
-    // Opcional: this.hideHud();
+    this.data.rodando = false;
+    this.lastTick = null;
   },
 
   zerarCronometro: function () {
     this.data.rodando = false;
     this.lastTick = null;
     this.restanteMs = this.data.tempoInicial * 1000;
-    this.setDisplay(this.data.tempoInicial, 0);
-    this.updateHud(this.data.tempoInicial, 0);
-    this.hideHud();
-    if (this.piscando) this.stopHudBlink();
-  },
-
-  setarTempo: function (segundos) {
-    if (
-      typeof segundos !== "number" ||
-      isNaN(segundos) ||
-      segundos < 0 ||
-      segundos > 99
-    )
-      return;
-    this.data.tempoInicial = segundos;
-    this.zerarCronometro();
-  },
+    
+    this.atualizarVisuais(this.data.tempoInicial, 0);
+  }
 });

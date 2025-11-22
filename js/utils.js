@@ -2,7 +2,7 @@ window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 
 document.addEventListener("fullscreenchange", () => {
   const txtFullscreen = document.getElementById("txt-fullscreen");
-  
+
   if (txtFullscreen) {
     if (document.fullscreenElement) {
       txtFullscreen.innerText = "SAIR TELA CHEIA";
@@ -29,5 +29,59 @@ window.addEventListener("keydown", (e) => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     }
+  }
+});
+
+AFRAME.registerComponent("controle-ui", {
+  init: function () {
+    this.hudTopo = document.getElementById("hud-topo-container");
+    this.hudLateral = document.getElementById("hud-controls");
+    this.txtPlacar = document.getElementById("txt-placar");
+    this.hintMenu = document.getElementById("hint-menu"); 
+    
+    this.placarVisivel = true;
+    this.menuVisivel = true;
+
+    this.onKeyDown = this.onKeyDown.bind(this);
+    window.addEventListener("keydown", this.onKeyDown);
+  },
+
+  onKeyDown: function (e) {
+    if (e.code === "KeyP") {
+      this.placarVisivel = !this.placarVisivel;
+      
+      if (this.hudTopo) {
+        if (this.placarVisivel) this.hudTopo.classList.remove("oculto");
+        else this.hudTopo.classList.add("oculto");
+      }
+
+      if (this.txtPlacar) {
+          this.txtPlacar.innerText = this.placarVisivel ? "Ocultar Placar" : "Mostrar Placar";
+      }
+    }
+
+    if (e.code === "KeyG") {
+      this.menuVisivel = !this.menuVisivel;
+
+      if (this.hudLateral) {
+        if (this.menuVisivel) {
+            this.hudLateral.classList.remove("oculto-lateral");
+        } else {
+            this.hudLateral.classList.add("oculto-lateral");
+        }
+      }
+
+      if (this.hintMenu) {
+          if (this.menuVisivel) {
+              this.hintMenu.classList.add("oculto");
+          } else {
+              this.hintMenu.classList.remove("oculto");
+          }
+      }
+    }
+  },
+  
+  remove: function() {
+      window.removeEventListener("keydown", this.onKeyDown);
   }
 });

@@ -57,7 +57,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
   },
 
   invocarBola: function (e) {
-    if (e.code === "KeyP") {
+    if (e.code === "KeyT") {
       if (this.segurando) return;
 
       if (this.el.body) {
