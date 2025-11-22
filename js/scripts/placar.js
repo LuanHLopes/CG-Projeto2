@@ -20,7 +20,9 @@ AFRAME.registerComponent("sensor", {
     if (e.detail.body.el.id === "bola") {
       const tempoAtual = Date.now();
 
-      if (tempoAtual - this.ultimoPonto > 1000) {
+      const velY = e.detail.body.velocity.y;
+
+      if (velY < 0 && tempoAtual - this.ultimoPonto > 1000) {
         this.registrarCesta();
         this.ultimoPonto = tempoAtual;
 
