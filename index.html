@@ -1354,6 +1354,46 @@
           config-fisica="restituicao: 0.4; atrito: 0.5"
         >
         </a-box>
+
+        <!-- AREA DO MENU -->
+        <a-entity
+          id="zona-interacao-player"
+          position="57 1 40"
+          rotation="-90 0 0"
+        >
+          <a-plane
+            width="170"
+            height="120"
+            color="#ff0000"
+            opacity="0.25"
+            transparent="true"
+            shader="flat"
+            side="double"
+            visible="false"
+          >
+          </a-plane>
+
+          <a-plane
+            width="170"
+            height="120"
+            material="shader: flat; wireframe: true; color: #ff0000; wireframeLinewidth: 2"
+            visible="false"
+          >
+          </a-plane>
+
+          <a-text
+            value="AREA DE MENU"
+            align="center"
+            position="0 20 0"
+            rotation="0 0 180"
+            scale="20 20 20"
+            color="#ff0000"
+            opacity="0.7"
+            visible="false"
+          >
+          </a-text>
+        </a-entity>
+        <!-- FIM ÁREA DO MENU -->
       </a-gltf-model>
 
       <!-- FIM PAINEL -->

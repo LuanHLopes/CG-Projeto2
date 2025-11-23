@@ -1,72 +1,64 @@
 AFRAME.registerComponent("menu-placar", {
   init: function () {
-    // TEXTURAS -------------------------------------------------------------
-    const canvasF = document.createElement("canvas");
-    canvasF.width = 128;
-    canvasF.height = 128;
-    const ctxF = canvasF.getContext("2d");
-    ctxF.fillStyle = "rgba(30, 30, 30, 0.85)";
-    ctxF.strokeStyle = "rgba(255, 255, 255, 0.5)";
-    ctxF.lineWidth = 4;
-    ctxF.beginPath();
-    ctxF.roundRect(2, 2, 124, 124, 35);
-    ctxF.fill();
-    ctxF.stroke();
-    const texFId = "tex-tecla-f-glass";
-    if (!document.getElementById(texFId)) {
-      const imgF = document.createElement("img");
-      imgF.id = texFId;
-      imgF.src = canvasF.toDataURL();
-      document.querySelector("a-assets").appendChild(imgF);
-    }
+    // === 1. TEXTURAS (MANTIDO) ===
+    const criarTextura = (id, width, height, drawFn) => {
+      if (!document.getElementById(id)) {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        drawFn(ctx, width, height);
+        const img = document.createElement("img");
+        img.id = id;
+        img.src = canvas.toDataURL();
+        document.querySelector("a-assets").appendChild(img);
+      }
+    };
 
-    const canvasItem = document.createElement("canvas");
-    canvasItem.width = 512;
-    canvasItem.height = 120;
-    const ctxItem = canvasItem.getContext("2d");
-    ctxItem.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctxItem.strokeStyle = "rgba(255, 255, 255, 0.9)";
-    ctxItem.lineWidth = 4;
-    ctxItem.beginPath();
-    ctxItem.roundRect(2, 2, 508, 116, 35);
-    ctxItem.fill();
-    ctxItem.stroke();
-    const texItemId = "tex-menu-item-white";
-    if (!document.getElementById(texItemId)) {
-      const imgItem = document.createElement("img");
-      imgItem.id = texItemId;
-      imgItem.src = canvasItem.toDataURL();
-      document.querySelector("a-assets").appendChild(imgItem);
-    }
+    criarTextura("tex-tecla-f-glass", 128, 128, (ctx, w, h) => {
+      ctx.fillStyle = "rgba(30, 30, 30, 0.85)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(2, 2, w - 4, h - 4, 35);
+      ctx.fill();
+      ctx.stroke();
+    });
 
-    const canvasBg = document.createElement("canvas");
-    canvasBg.width = 256;
-    canvasBg.height = 512;
-    const ctxBg = canvasBg.getContext("2d");
-    ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
-    ctxBg.strokeStyle = "rgba(255,255,255,0.9)";
-    ctxBg.lineWidth = 2;
-    ctxBg.beginPath();
-    ctxBg.rect(2, 2, 252, 508);
-    ctxBg.stroke();
-    const texBgId = "tex-submenu-bg-square";
-    if (!document.getElementById(texBgId)) {
-      const imgBg = document.createElement("img");
-      imgBg.id = texBgId;
-      imgBg.src = canvasBg.toDataURL();
-      document.querySelector("a-assets").appendChild(imgBg);
-    }
+    criarTextura("tex-menu-item-white", 512, 120, (ctx, w, h) => {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(2, 2, w - 4, h - 4, 35);
+      ctx.fill();
+      ctx.stroke();
+    });
 
-    // Variáveis globais para seleção
-    window.tempoCronometro = window.tempoCronometro || 60; // Timer inicial
-    window.cestaSelecionada = window.cestaSelecionada || 1; // Cesta inicial
+    criarTextura("tex-submenu-bg-square", 256, 512, (ctx, w, h) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255,255,255,0.9)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.rect(2, 2, w - 4, h - 4);
+      ctx.stroke();
+    });
 
-    // ESTRUTURA FIXA -------------------------------------------------------
+    window.tempoCronometro = window.tempoCronometro || 90;
+    window.cestaSelecionada = window.cestaSelecionada || 1;
+
+    // === 2. ESTRUTURA VISUAL ===
     const container = document.createElement("a-entity");
     container.setAttribute("position", "4.35 10.0 -8.3");
     container.setAttribute("rotation", "0 -10 0");
-    this.el.appendChild(container);
 
+    // [NOVO] Começa invisível para só aparecer quando entrar na área
+    container.setAttribute("visible", false);
+
+    this.el.appendChild(container);
+    this.container = container;
+
+    // Decoração (Linhas e Bolinha)
     const bolaAncora = document.createElement("a-circle");
     bolaAncora.setAttribute("radius", "0.03");
     bolaAncora.setAttribute("color", "white");
@@ -74,7 +66,6 @@ AFRAME.registerComponent("menu-placar", {
     container.appendChild(bolaAncora);
 
     const profundidade = 0.05;
-
     const linhaDiagonal = document.createElement("a-entity");
     linhaDiagonal.setAttribute("line", {
       start: "0 0 0",
@@ -93,23 +84,23 @@ AFRAME.registerComponent("menu-placar", {
     });
     container.appendChild(linhaHorizontal);
 
+    // Título "Placar"
     const titulo = document.createElement("a-text");
     titulo.setAttribute("value", "Placar");
     titulo.setAttribute("font", "roboto");
     titulo.setAttribute("color", "white");
     titulo.setAttribute("align", "left");
-    titulo.setAttribute("baseline", "center");
     titulo.setAttribute("width", "10");
     titulo.setAttribute("position", `0.9 0.5 ${profundidade}`);
-    titulo.setAttribute("side", "double");
     container.appendChild(titulo);
 
+    // Prompt "F Interagir"
     const grupoF = document.createElement("a-entity");
     grupoF.setAttribute("position", `1.2 0.15 ${profundidade}`);
     container.appendChild(grupoF);
 
     const bgTecla = document.createElement("a-plane");
-    bgTecla.setAttribute("src", `#${texFId}`);
+    bgTecla.setAttribute("src", "#tex-tecla-f-glass");
     bgTecla.setAttribute("width", "0.22");
     bgTecla.setAttribute("height", "0.22");
     bgTecla.setAttribute("transparent", "true");
@@ -121,10 +112,8 @@ AFRAME.registerComponent("menu-placar", {
     letraTecla.setAttribute("value", "F");
     letraTecla.setAttribute("font", "roboto");
     letraTecla.setAttribute("align", "center");
-    letraTecla.setAttribute("baseline", "center");
-    letraTecla.setAttribute("color", "white");
-    letraTecla.setAttribute("scale", "0.3 0.3 1");
     letraTecla.setAttribute("width", "10");
+    letraTecla.setAttribute("scale", "0.3 0.3 1");
     letraTecla.setAttribute("position", "0 0 0.01");
     bgTecla.appendChild(letraTecla);
 
@@ -132,21 +121,32 @@ AFRAME.registerComponent("menu-placar", {
     textoInteragir.setAttribute("value", "Interagir");
     textoInteragir.setAttribute("font", "roboto");
     textoInteragir.setAttribute("color", "white");
-    textoInteragir.setAttribute("align", "left");
-    textoInteragir.setAttribute("baseline", "center");
     textoInteragir.setAttribute("width", "5");
     textoInteragir.setAttribute("opacity", "0.8");
     textoInteragir.setAttribute("position", "0.26 0 0");
     grupoF.appendChild(textoInteragir);
 
-    // GERADOR DE ITENS -----------------------------------------------------
-    const criarItem = (parentContainer, texto, yOffset, adicionarCirculo) => {
+    // === 3. MENU PRINCIPAL ===
+    this.menuAberto = false;
+    const menuPrincipalY = 0.025;
+
+    const menuPrincipal = document.createElement("a-entity");
+    menuPrincipal.setAttribute("id", "menu-principal");
+    menuPrincipal.setAttribute(
+      "position",
+      `2.9 ${menuPrincipalY} ${profundidade}`
+    );
+    menuPrincipal.setAttribute("scale", "0 0 0");
+    container.appendChild(menuPrincipal);
+    this.menuPrincipal = menuPrincipal;
+
+    const criarItem = (parent, texto, yOffset, temCirculo) => {
       const itemGroup = document.createElement("a-entity");
       itemGroup.setAttribute("position", `0.85 ${yOffset} 0`);
-      parentContainer.appendChild(itemGroup);
+      parent.appendChild(itemGroup);
 
       const bgItem = document.createElement("a-plane");
-      bgItem.setAttribute("src", `#${texItemId}`);
+      bgItem.setAttribute("src", "#tex-menu-item-white");
       bgItem.setAttribute("width", "2.2");
       bgItem.setAttribute("height", "0.4");
       bgItem.setAttribute("transparent", "true");
@@ -154,6 +154,7 @@ AFRAME.registerComponent("menu-placar", {
       bgItem.classList.add("interativo");
       bgItem.setAttribute("color", "#222222");
       bgItem.setAttribute("opacity", "0.9");
+
       bgItem.setAttribute("animation__color_in", {
         property: "color",
         to: "#666666",
@@ -166,54 +167,32 @@ AFRAME.registerComponent("menu-placar", {
         dur: 150,
         startEvents: "mouseleave",
       });
+
       itemGroup.appendChild(bgItem);
 
       const textoItem = document.createElement("a-text");
       textoItem.setAttribute("value", texto);
       textoItem.setAttribute("font", "roboto");
-      textoItem.setAttribute("color", "white");
-      textoItem.setAttribute("align", "left");
-      textoItem.setAttribute("baseline", "center");
-      textoItem.setAttribute("width", "5");
       textoItem.setAttribute("position", "-0.95 0 0.01");
       itemGroup.appendChild(textoItem);
 
       let fundo = null;
-      let borda = null;
-      if (adicionarCirculo) {
-        const raioBorda = 0.1;
-        const raioFundo = 0.09;
-
-        // Círculo preto (fundo)
+      if (temCirculo) {
         fundo = document.createElement("a-circle");
-        fundo.setAttribute("radius", raioFundo);
+        fundo.setAttribute("radius", "0.09");
         fundo.setAttribute("color", "black");
-        fundo.setAttribute("opacity", "0"); // inicia invisível
-        fundo.setAttribute("side", "double");
-        fundo.setAttribute("segments", "128");
+        fundo.setAttribute("opacity", "0");
         fundo.setAttribute("position", "0.86 0 0.01");
         itemGroup.appendChild(fundo);
 
-        // Tarus branco (borda)
-        borda = document.createElement("a-torus");
-        borda.setAttribute("radius", raioBorda);
+        const borda = document.createElement("a-torus");
+        borda.setAttribute("radius", "0.1");
         borda.setAttribute("radius-tubular", "0.005");
-        borda.setAttribute("color", "white");
-        borda.setAttribute("opacity", "0.5");
-        borda.setAttribute("segments-radial", "128");
-        borda.setAttribute("side", "double");
         borda.setAttribute("position", "0.86 0 0.012");
         itemGroup.appendChild(borda);
       }
-
-      return { bgItem, itemGroup, fundo, borda };
+      return { bgItem, itemGroup, fundo };
     };
-
-    // MENU PRINCIPAL ------------------------------------------------------
-    const menuPrincipal = document.createElement("a-entity");
-    menuPrincipal.setAttribute("id", "menu-principal");
-    menuPrincipal.setAttribute("position", `2.9 0.025 ${profundidade}`);
-    container.appendChild(menuPrincipal);
 
     const principalItens = [];
     principalItens.push(criarItem(menuPrincipal, "Selecionar Cesta", 1.225));
@@ -222,46 +201,53 @@ AFRAME.registerComponent("menu-placar", {
     principalItens.push(criarItem(menuPrincipal, "Desafio Sem Mira", -0.125));
     principalItens.push(criarItem(menuPrincipal, "Desafio 5 Cestas", -0.575));
 
-    // SUBMENU TIMER
+    // === 4. SUBMENUS ===
     const submenuTimer = document.createElement("a-entity");
-    submenuTimer.setAttribute("id", "submenu-timer");
     submenuTimer.setAttribute("position", `5.4 0.8 ${profundidade}`);
+    submenuTimer.setAttribute("visible", false);
+    submenuTimer.setAttribute("scale", "0 0 0");
     container.appendChild(submenuTimer);
+    this.submenuTimer = submenuTimer;
 
-    const bgSubmenu = document.createElement("a-plane");
-    bgSubmenu.setAttribute("src", `#${texBgId}`);
-    bgSubmenu.setAttribute("width", "2.4");
-    bgSubmenu.setAttribute("height", "1.5");
-    bgSubmenu.setAttribute("transparent", "true");
-    bgSubmenu.setAttribute("shader", "flat");
-    bgSubmenu.setAttribute("color", "#222222");
-    bgSubmenu.setAttribute("opacity", "1");
-    bgSubmenu.setAttribute("position", "0.85 -0.45 -0.01");
-    submenuTimer.appendChild(bgSubmenu);
+    const bgSubTimer = document.createElement("a-plane");
+    bgSubTimer.setAttribute("src", "#tex-submenu-bg-square");
+    bgSubTimer.setAttribute("width", "2.4");
+    bgSubTimer.setAttribute("height", "1.5");
+    bgSubTimer.setAttribute("transparent", "true");
+    bgSubTimer.setAttribute("opacity", "1");
+    bgSubTimer.setAttribute("color", "#222222");
+    bgSubTimer.setAttribute("position", "0.85 -0.45 -0.01");
+    submenuTimer.appendChild(bgSubTimer);
 
-    // SUBMENU CESTA
     const submenuCesta = document.createElement("a-entity");
-    submenuCesta.setAttribute("id", "submenu-cesta");
-    const parentPos = principalItens[0].itemGroup.getAttribute("position");
-    const yParent = parentPos.y;
-
-    submenuCesta.setAttribute("position", `5.4 ${yParent} ${profundidade}`);
-
+    submenuCesta.setAttribute("position", `5.4 1.25 ${profundidade}`);
+    submenuCesta.setAttribute("visible", false);
+    submenuCesta.setAttribute("scale", "0 0 0");
     container.appendChild(submenuCesta);
+    this.submenuCesta = submenuCesta;
 
-    const bgSubmenuCesta = document.createElement("a-plane");
-    bgSubmenuCesta.setAttribute("src", `#${texBgId}`);
-    bgSubmenuCesta.setAttribute("width", "2.4");
-    bgSubmenuCesta.setAttribute("height", "1.0");
-    bgSubmenuCesta.setAttribute("transparent", "true");
-    bgSubmenuCesta.setAttribute("shader", "flat");
-    bgSubmenuCesta.setAttribute("color", "#222222");
-    bgSubmenuCesta.setAttribute("opacity", "1");
-    bgSubmenuCesta.setAttribute("position", "0.85 -0.225 -0.01");
-    submenuCesta.appendChild(bgSubmenuCesta);
+    const bgSubCesta = document.createElement("a-plane");
+    bgSubCesta.setAttribute("src", "#tex-submenu-bg-square");
+    bgSubCesta.setAttribute("width", "2.4");
+    bgSubCesta.setAttribute("height", "1.0");
+    bgSubCesta.setAttribute("transparent", "true");
+    bgSubCesta.setAttribute("opacity", "1");
+    bgSubCesta.setAttribute("color", "#222222");
+    bgSubCesta.setAttribute("position", "0.85 -0.225 -0.01");
+    submenuCesta.appendChild(bgSubCesta);
 
+    const linhaConexao = document.createElement("a-plane");
+    linhaConexao.setAttribute("color", "#222222");
+    linhaConexao.setAttribute("opacity", "0.9");
+    linhaConexao.setAttribute("width", "0.22");
+    linhaConexao.setAttribute("height", "0.035");
+    linhaConexao.setAttribute("visible", false);
+    container.appendChild(linhaConexao);
+    this.linhaConexao = linhaConexao;
+
+    // === LÓGICA DE ITENS ===
     const valoresTimer = [30, 60, 90];
-    const subItens = [
+    const subItensTimer = [
       criarItem(submenuTimer, "30s", 0, true),
       criarItem(submenuTimer, "60s", -0.45, true),
       criarItem(submenuTimer, "90s", -0.9, true),
@@ -269,172 +255,197 @@ AFRAME.registerComponent("menu-placar", {
 
     const valoresCesta = [1, 2];
     const subItensCesta = [
-      criarItem(submenuCesta, "Cesta 1", 0, true),
-      criarItem(submenuCesta, "Cesta 2", -0.45, true),
+      criarItem(submenuCesta, "Cesta Home", 0, true),
+      criarItem(submenuCesta, "Cesta Guest", -0.45, true),
     ];
 
-    // Seleção visual:
-    function marcarFundoSelecionado(ref, selecionado) {
-      if (ref.fundo) {
-        if (selecionado) {
+    const marcarSelecionado = (itens, valorAtual, listaValores) => {
+      itens.forEach((ref, idx) => {
+        if (ref.fundo)
+          ref.fundo.setAttribute(
+            "opacity",
+            listaValores[idx] === valorAtual ? "1" : "0"
+          );
+        if (ref.fundo && listaValores[idx] === valorAtual)
           ref.fundo.setAttribute("color", "green");
-          ref.fundo.setAttribute("opacity", "1");
-        } else {
-          ref.fundo.setAttribute("opacity", "0");
-        }
-      }
-    }
+      });
+    };
 
-    // Clique timer:
-    subItens.forEach((ref, idx) => {
+    marcarSelecionado(subItensTimer, window.tempoCronometro, valoresTimer);
+    marcarSelecionado(subItensCesta, window.cestaSelecionada, valoresCesta);
+
+    const fecharSubmenusInterno = () => {
+      submenuTimer.setAttribute("scale", "0 0 0");
+      submenuTimer.setAttribute("visible", false);
+      submenuCesta.setAttribute("scale", "0 0 0");
+      submenuCesta.setAttribute("visible", false);
+      linhaConexao.setAttribute("visible", false);
+      if (this.itemSelecionado) {
+        this.itemSelecionado.bgItem.setAttribute("color", "#222222");
+        this.itemSelecionado.bgItem.setAttribute(
+          "animation__color_in",
+          "property: color; to: #666666; dur: 150; startEvents: mouseenter"
+        );
+        this.itemSelecionado.bgItem.setAttribute(
+          "animation__color_out",
+          "property: color; to: #222222; dur: 150; startEvents: mouseleave"
+        );
+      }
+      this.itemSelecionado = null;
+    };
+
+    subItensTimer.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
         window.setarTempoCronometro(valoresTimer[idx]);
-        subItens.forEach((r) => marcarFundoSelecionado(r, false));
-        marcarFundoSelecionado(ref, true);
-        fecharSubmenu();
+        marcarSelecionado(subItensTimer, valoresTimer[idx], valoresTimer);
+        fecharSubmenusInterno();
       });
     });
 
-    // Clique cesta:
     subItensCesta.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
         window.cestaSelecionada = valoresCesta[idx];
-        console.log("Cesta selecionada:", window.cestaSelecionada);
-        subItensCesta.forEach((r) => marcarFundoSelecionado(r, false));
-        marcarFundoSelecionado(ref, true);
-        fecharSubmenu();
+        marcarSelecionado(subItensCesta, valoresCesta[idx], valoresCesta);
+        fecharSubmenusInterno();
       });
     });
 
-    // LINHA DE CONEXÃO
-    const linhaConexao = document.createElement("a-plane");
-    linhaConexao.setAttribute("color", "#222222");
-    linhaConexao.setAttribute("opacity", "0.9");
-    linhaConexao.setAttribute("shader", "flat");
-    linhaConexao.setAttribute("position", `4.95 0.775 ${profundidade - 0.001}`);
-    linhaConexao.setAttribute("width", "0.22");
-    linhaConexao.setAttribute("height", "0.035");
-    linhaConexao.setAttribute("visible", false);
-    container.appendChild(linhaConexao);
-
-    this.menuContainer = container;
-    let submenuAberto = null;
-    let itemSelecionado = null;
-    submenuTimer.setAttribute("visible", false);
-    submenuCesta.setAttribute("visible", false);
-
-    // Cor sem animação
-    function fixaCorSelecionado(ref) {
-      ref.bgItem.removeAttribute("animation__color_in");
-      ref.bgItem.removeAttribute("animation__color_out");
-      ref.bgItem.setAttribute("color", "#666666");
-    }
-
-    // Cor normal
-    function restauraCorNormal(ref) {
-      ref.bgItem.setAttribute("animation__color_in", {
-        property: "color",
-        to: "#666666",
-        dur: 150,
-        startEvents: "mouseenter",
-      });
-      ref.bgItem.setAttribute("animation__color_out", {
-        property: "color",
-        to: "#222222",
-        dur: 150,
-        startEvents: "mouseleave",
-      });
-      ref.bgItem.setAttribute("color", "#222222");
-    }
-
-    function abrirSubmenu(idxSubmenu) {
-      // Fecha anterior
-      if (submenuAberto) submenuAberto.setAttribute("visible", false);
-      if (itemSelecionado && itemSelecionado !== principalItens[idxSubmenu]) {
-        restauraCorNormal(itemSelecionado);
-      }
-
-      itemSelecionado = principalItens[idxSubmenu];
-
-      linhaConexao.setAttribute("visible", true); // LINHA SEMPRE APARECE NO ITEM CLICADO
-
-      if (idxSubmenu === 1) {
-        submenuTimer.setAttribute("visible", true);
-        submenuTimer.setAttribute("pointer-events", "auto"); // ATIVADO
-        submenuTimer.setAttribute("scale", "1 1 1"); // ATIVO
-        submenuAberto = submenuTimer;
-        fixaCorSelecionado(itemSelecionado);
-        subItens.forEach((ref, i) => {
-          const valor = valoresTimer[i];
-          marcarFundoSelecionado(ref, window.tempoCronometro === valor);
-        });
-        submenuCesta.setAttribute("visible", false);
-        submenuCesta.setAttribute("pointer-events", "none"); // DESATIVADO
-        submenuCesta.setAttribute("scale", "0 0 0"); // DESATIVADO
-      } else if (idxSubmenu === 0) {
-        const parentPos = principalItens[0].itemGroup.getAttribute("position");
-        const yParent = parentPos.y;
-        submenuCesta.setAttribute("position", `5.4 ${yParent} ${profundidade}`);
-        submenuCesta.setAttribute("visible", true);
-        submenuCesta.setAttribute("pointer-events", "auto"); // ATIVADO
-        submenuCesta.setAttribute("scale", "1 1 1"); // ATIVO
-        submenuAberto = submenuCesta;
-        fixaCorSelecionado(itemSelecionado);
-        subItensCesta.forEach((ref, i) => {
-          const valor = valoresCesta[i];
-          marcarFundoSelecionado(ref, window.cestaSelecionada === valor);
-        });
-        submenuTimer.setAttribute("visible", false);
-        submenuTimer.setAttribute("pointer-events", "none"); // DESATIVADO
-        submenuTimer.setAttribute("scale", "0 0 0"); // DESATIVADO
-      } else {
-        submenuAberto = null;
-        submenuTimer.setAttribute("visible", false);
-        submenuTimer.setAttribute("pointer-events", "none"); // DESATIVADO
-        submenuTimer.setAttribute("scale", "0 0 0"); // DESATIVADO
-        submenuCesta.setAttribute("visible", false);
-        submenuCesta.setAttribute("pointer-events", "none"); // DESATIVADO
-        submenuCesta.setAttribute("scale", "0 0 0"); // DESATIVADO
-        linhaConexao.setAttribute("visible", false); // DESLIGA SE NÃO ESTIVER EM SUBMENU
-        fixaCorSelecionado(itemSelecionado);
-      }
-    }
-
-    function fecharSubmenu() {
-      submenuTimer.setAttribute("visible", false);
-      submenuTimer.setAttribute("pointer-events", "none"); // DESATIVA
-      submenuCesta.setAttribute("visible", false);
-      submenuCesta.setAttribute("pointer-events", "none"); // DESATIVA
-      linhaConexao.setAttribute("visible", false);
-      if (itemSelecionado) {
-        restauraCorNormal(itemSelecionado);
-      }
-      submenuAberto = null;
-    }
+    this.itemSelecionado = null;
 
     principalItens.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
-        abrirSubmenu(idx);
+        fecharSubmenusInterno();
 
-        if (idx === 0 || idx === 1) {
-          const itemPos = ref.itemGroup.getAttribute("position");
-          let yLinha = itemPos.y;
+        this.itemSelecionado = ref;
+        ref.bgItem.removeAttribute("animation__color_in");
+        ref.bgItem.removeAttribute("animation__color_out");
+        ref.bgItem.setAttribute("color", "#666666");
 
+        const yLinhaAbsoluta =
+          ref.itemGroup.getAttribute("position").y + menuPrincipalY;
+
+        if (idx === 0) {
+          submenuCesta.setAttribute("visible", true);
+          submenuCesta.setAttribute("scale", "1 1 1");
           linhaConexao.setAttribute(
             "position",
-            `4.95 ${yLinha} ${profundidade - 0.001}`
+            `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
           );
           linhaConexao.setAttribute("visible", true);
-        } else {
-          linhaConexao.setAttribute("visible", false);
-        }
-      });
-      ref.bgItem.addEventListener("mouseleave", () => {
-        const submenuAtivo = submenuAberto && itemSelecionado === ref;
-        if (!submenuAtivo && itemSelecionado !== ref) {
-          ref.bgItem.setAttribute("color", "#222222");
+        } else if (idx === 1) {
+          submenuTimer.setAttribute("visible", true);
+          submenuTimer.setAttribute("scale", "1 1 1");
+          linhaConexao.setAttribute(
+            "position",
+            `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
+          );
+          linhaConexao.setAttribute("visible", true);
         }
       });
     });
+
+    // BIND METHODS
+    this.toggleMenu = this.toggleMenu.bind(this);
+    this.fecharMenuTotal = this.fecharMenuTotal.bind(this);
+
+    window.addEventListener("keydown", this.toggleMenu);
+  },
+
+  // === LOOP DE VERIFICAÇÃO (RODA SEMPRE) ===
+  tick: function () {
+    // Calcula a distância atual
+    const dist = this.calcularDistancia();
+    if (dist === null) return;
+
+    // Estado atual de visibilidade
+    const estaVisivel = this.container.getAttribute("visible");
+
+    // LÓGICA DE ENTRADA/SAÍDA
+    if (dist <= 4.5) {
+      // Entrou na área: Mostra o prompt (Linhas, Texto, F)
+      if (!estaVisivel) {
+        this.container.setAttribute("visible", true);
+      }
+    } else {
+      // Saiu da área: Esconde tudo
+      if (estaVisivel) {
+        this.container.setAttribute("visible", false);
+        // Se o menu estava aberto, fecha e reseta ele
+        if (this.menuAberto) {
+          this.fecharMenuTotal();
+        }
+      }
+    }
+  },
+
+  // === HELPER: CALCULAR DISTÂNCIA ===
+  calcularDistancia: function () {
+    const camera = document.getElementById("camera-jogador");
+    const zonaInteracao = document.getElementById("zona-interacao-player");
+
+    if (!camera || !zonaInteracao) return null;
+
+    const playerPos = new THREE.Vector3();
+    const zonaPos = new THREE.Vector3();
+
+    camera.object3D.getWorldPosition(playerPos);
+    zonaInteracao.object3D.getWorldPosition(zonaPos);
+
+    return Math.sqrt(
+      Math.pow(playerPos.x - zonaPos.x, 2) +
+        Math.pow(playerPos.z - zonaPos.z, 2)
+    );
+  },
+
+  // === HELPER: FECHAR TUDO (RESETA MENU) ===
+  fecharMenuTotal: function () {
+    this.menuAberto = false;
+    this.menuPrincipal.setAttribute("scale", "0 0 0");
+    this.submenuTimer.setAttribute("scale", "0 0 0");
+    this.submenuTimer.setAttribute("visible", false);
+    this.submenuCesta.setAttribute("scale", "0 0 0");
+    this.submenuCesta.setAttribute("visible", false);
+    this.linhaConexao.setAttribute("visible", false);
+
+    if (this.itemSelecionado) {
+      this.itemSelecionado.bgItem.setAttribute("color", "#222222");
+      this.itemSelecionado.bgItem.setAttribute(
+        "animation__color_in",
+        "property: color; to: #666666; dur: 150; startEvents: mouseenter"
+      );
+      this.itemSelecionado.bgItem.setAttribute(
+        "animation__color_out",
+        "property: color; to: #222222; dur: 150; startEvents: mouseleave"
+      );
+      this.itemSelecionado = null;
+    }
+  },
+
+  // === INTERAÇÃO TECLA F ===
+  toggleMenu: function (e) {
+    if (e.code === "KeyF") {
+      const dist = this.calcularDistancia();
+
+      // Se tiver longe, ou se o container estiver invisível, ignora
+      if (
+        dist === null ||
+        dist > 4.5 ||
+        !this.container.getAttribute("visible")
+      ) {
+        return;
+      }
+
+      this.menuAberto = !this.menuAberto;
+
+      if (this.menuAberto) {
+        this.menuPrincipal.setAttribute("scale", "1 1 1");
+      } else {
+        this.fecharMenuTotal();
+      }
+    }
+  },
+
+  remove: function () {
+    window.removeEventListener("keydown", this.toggleMenu);
   },
 });
