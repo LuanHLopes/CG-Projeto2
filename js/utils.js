@@ -14,8 +14,7 @@ document.addEventListener("fullscreenchange", () => {
 
 window.addEventListener("keydown", (e) => {
   if (e.code === "F11") {
-    e.preventDefault();
-
+    e.preventDefault(); 
     if (!document.fullscreenElement) {
       document.body.requestFullscreen().catch((err) => {
         console.warn("Erro ao tentar tela cheia:", err);
@@ -23,6 +22,13 @@ window.addEventListener("keydown", (e) => {
     } else {
       document.exitFullscreen();
     }
+  }
+
+  if (e.code === "KeyF") {
+      e.preventDefault(); 
+      e.stopPropagation(); 
+      console.log("Tecla F pressionada - Pronto para interação");
+      
   }
 
   if (e.code === "Escape") {
