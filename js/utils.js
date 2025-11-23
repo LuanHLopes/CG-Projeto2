@@ -1,5 +1,8 @@
 window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 
+window.cestaSelecionada = 1; 
+window.tempoCronometro = 90;
+
 document.addEventListener("fullscreenchange", () => {
   const txtFullscreen = document.getElementById("txt-fullscreen");
 
@@ -22,13 +25,6 @@ window.addEventListener("keydown", (e) => {
     } else {
       document.exitFullscreen();
     }
-  }
-
-  if (e.code === "KeyF") {
-      e.preventDefault(); 
-      e.stopPropagation(); 
-      console.log("Tecla F pressionada - Pronto para interação");
-      
   }
 
   if (e.code === "Escape") {

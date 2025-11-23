@@ -1,7 +1,7 @@
 AFRAME.registerComponent("cronometro-tempo", {
   schema: {
     rodando: { type: "boolean", default: false },
-    tempoInicial: { type: "int", default: 90 },
+    tempoInicial: { type: "int", default: window.tempoCronometro },
   },
 
   init: function () {
@@ -132,7 +132,8 @@ AFRAME.registerComponent("cronometro-tempo", {
         return;
     }
 
-    this.data.tempoInicial = segundos;
+    window.tempoCronometro = segundos;
+    this.data.tempoInicial = window.tempoCronometro;
     this.zerarCronometro();
     console.log(`Tempo definido para: ${segundos}s`);
   }
