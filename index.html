@@ -15,6 +15,7 @@
     />
 
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
@@ -150,6 +151,23 @@
         <a-asset-item
           id="modelo-painel"
           src="./assets/painel.glb"
+        ></a-asset-item>
+
+        <a-asset-item
+          id="modelo-banco"
+          src="./assets/decoracao-quadra/banco.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="modelo-radio"
+          src="./assets/decoracao-quadra/radio.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="modelo-mochila"
+          src="./assets/decoracao-quadra/mochila.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="modelo-gato"
+          src="./assets/decoracao-quadra/gato.glb"
         ></a-asset-item>
 
         <img id="tex-cimento" src="./assets/texturas/cimento.jpg" />
@@ -1472,6 +1490,45 @@
         </a-entity>
       </a-gltf-model>
       <!-- FIM PLACAR -->
+
+      <!--DECORAÇÃO QUADRA -->
+      <a-gltf-model
+        src="#modelo-banco"
+        position="11.7 0 -9"
+        rotation="0 -90 0"
+        scale="0.025 0.025 0.025"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-radio"
+        position="11.95 1.9 -12.2"
+        rotation="0 -55 0"
+        scale="3 3 3"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-mochila"
+        position="11.3 -0.25 -8.05"
+        rotation="-15 20 -15"
+        scale="0.4 0.4 0.4"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-gato"
+        position="10.7 0 13.5"
+        rotation="0 -225 0"
+        scale="0.05 0.05 0.05"
+        animation-mixer="clip: *; loop: repeat; timeScale: 1"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-banco"
+        position="11.7 0 10.5"
+        rotation="0 -90 0"
+        scale="0.025 0.025 0.025"
+      >
+      </a-gltf-model>
+      <!--FIM DECORAÇÃO QUADRA-->
 
       <a-sky color="#87CEEB"></a-sky>
     </a-scene>
