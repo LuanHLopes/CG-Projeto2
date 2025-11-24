@@ -197,9 +197,9 @@ AFRAME.registerComponent("menu-placar", {
     const principalItens = [];
     principalItens.push(criarItem(menuPrincipal, "Selecionar Cesta", 1.225));
     principalItens.push(criarItem(menuPrincipal, "Definir Timer", 0.775));
-    principalItens.push(criarItem(menuPrincipal, "Desafio 21 Pontos", 0.325));
-    principalItens.push(criarItem(menuPrincipal, "Desafio Sem Mira", -0.125));
-    principalItens.push(criarItem(menuPrincipal, "Desafio 5 Cestas", -0.575));
+    principalItens.push(criarItem(menuPrincipal, "Desafio Street 21", 0.325));
+    principalItens.push(criarItem(menuPrincipal, "Desafio Volta ao Mundo", -0.125));
+    principalItens.push(criarItem(menuPrincipal, "Desafio On Fire", -0.575));
 
     // === 4. SUBMENUS ===
     const submenuTimer = document.createElement("a-entity");

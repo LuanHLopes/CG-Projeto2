@@ -3,6 +3,24 @@ window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 window.cestaSelecionada = 1; 
 window.tempoCronometro = 90;
 
+window.GAME_MODE = Object.freeze({
+    LIVRE: "LIVRE",
+    STREET_21: "STREET_21",
+    VOLTA_AO_MUNDO: "VOLTA_AO_MUNDO",
+    ON_FIRE: "ON_FIRE"
+});
+
+window.GAME_STATUS = Object.freeze({
+    DESATIVADO: "DESATIVADO",
+    ESPERA: "ESPERA",        
+    ATIVO: "ATIVO"           
+});
+
+window.estadoJogo = {
+    modo: window.GAME_MODE.LIVRE,
+    status: window.GAME_STATUS.DESATIVADO
+};
+
 document.addEventListener("fullscreenchange", () => {
   const txtFullscreen = document.getElementById("txt-fullscreen");
 

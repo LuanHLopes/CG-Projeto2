@@ -18,6 +18,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.forcaTotal = this.niveisForca[2];
     this.ajudaVertical = 0.45;
     this.massaBola = 0.62;
+    this.podeUsarT = true;
 
     this.processarAcao = this.processarAcao.bind(this);
     this.pegar = this.pegar.bind(this);
@@ -58,6 +59,11 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
   invocarBola: function (e) {
     if (e.code === "KeyT") {
+      if (!this.podeUsarT) {
+        console.log("Tecla T bloqueada durante o minigame.");
+        return;
+      }
+
       if (this.segurando) return;
 
       if (this.el.body) {

@@ -141,36 +141,49 @@ AFRAME.registerComponent("sensor", {
 
 AFRAME.registerComponent("controle-placar", {
   init: function () {
-    this.resetar = this.resetar.bind(this);
-    window.addEventListener("keydown", this.resetar);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.resetarLogica = this.resetarLogica.bind(this);
+
+    window.addEventListener("keydown", this.onKeyDown);
+
+    window.resetarPlacar = this.resetarLogica;
   },
-  resetar: function (e) {
+
+  resetarLogica: function () {
+    const hudH = document.getElementById("score-top-home");
+    const hudG = document.getElementById("score-top-guest");
+    if (hudH) hudH.innerText = "00";
+    if (hudG) hudG.innerText = "00";
+
+    const s1 = document.getElementById("txt-score-1");
+    const s2 = document.getElementById("txt-score-2");
+    if (s1) s1.innerText = "0";
+    if (s2) s2.innerText = "0";
+
+    const resetLed = (sel) => {
+      const g = document.querySelector(sel);
+      if (g)
+        g.querySelectorAll("[digito-led]").forEach((d) => {
+          if (d.components["digito-led"])
+            d.components["digito-led"].setNumero(0);
+        });
+    };
+    resetLed("#grupo-home");
+    resetLed("#grupo-guest");
+
+    console.log("🔄 Placar zerado via Sistema.");
+  },
+
+  onKeyDown: function (e) {
     if (e.code === "KeyR") {
-      const hudH = document.getElementById("score-top-home");
-      const hudG = document.getElementById("score-top-guest");
-      if (hudH) hudH.innerText = "00";
-      if (hudG) hudG.innerText = "00";
-
-      const s1 = document.getElementById("txt-score-1");
-      const s2 = document.getElementById("txt-score-2");
-      if (s1) s1.innerText = "0";
-      if (s2) s2.innerText = "0";
-
-      const resetLed = (sel) => {
-        const g = document.querySelector(sel);
-        if (g)
-          g.querySelectorAll("[digito-led]").forEach((d) => {
-            if (d.components["digito-led"])
-              d.components["digito-led"].setNumero(0);
-          });
-      };
-      resetLed("#grupo-home");
-      resetLed("#grupo-guest");
-
-      console.log("Placar Resetado!");
+      this.resetarLogica();
     }
   },
+
   remove: function () {
-    window.removeEventListener("keydown", this.resetar);
+    window.removeEventListener("keydown", this.onKeyDown);
+    if (window.resetarPlacar === this.resetarLogica) {
+        window.resetarPlacar = null;
+    }
   },
 });
