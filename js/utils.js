@@ -15,6 +15,7 @@ window.GAME_MODE = Object.freeze({
 window.GAME_STATUS = Object.freeze({
   DESATIVADO: "DESATIVADO",
   ESPERA: "ESPERA",
+  CONTAGEM: "CONTAGEM", 
   ATIVO: "ATIVO",
 });
 

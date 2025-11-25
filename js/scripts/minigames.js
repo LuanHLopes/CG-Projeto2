@@ -370,6 +370,7 @@ const Minigames = {
       ring.setAttribute("color", "#00FF00");
       ring.setAttribute("radius-inner", "1.9");
       ring.setAttribute("radius-outer", "2.0");
+      ring.setAttribute("segments-theta", "128");
       ring.setAttribute("rotation", "-90 0 0");
       ring.setAttribute("shader", "flat");
       ring.setAttribute("opacity", "0.8");
@@ -514,10 +515,49 @@ const Minigames = {
       return null;
     }
   },
+  // Função para gerenciar a contagem regressiva visual
+  _iniciarContagem: function (callbackInicio) {
+    const overlay = document.getElementById("countdown-overlay");
+    const texto = document.getElementById("countdown-text");
+
+    if (!overlay || !texto) {
+      callbackInicio();
+      return;
+    }
+
+    // 1. Configura Estado e Visual
+    this._atualizarEstado(window.GAME_STATUS.CONTAGEM);
+    overlay.classList.remove("oculto");
+
+    // 2. Sequência de Contagem
+    let conta = 3;
+    texto.innerText = conta;
+
+    const intervalo = setInterval(() => {
+      conta--;
+      if (conta > 0) {
+        texto.innerText = conta;
+      } else {
+        // 3. Terminou (GO!)
+        clearInterval(intervalo);
+        texto.innerText = "VAI!";
+
+        // Pequeno delay para mostrar o GO antes de sumir
+        setTimeout(() => {
+          overlay.classList.add("oculto");
+          // Chama a função real de iniciar o jogo
+          callbackInicio();
+        }, 500);
+      }
+    }, 1000); // 1 segundo por número
+  },
+
   _configurarControles: function () {
     if (this._listenerTeclas)
       window.removeEventListener("keydown", this._listenerTeclas);
+
     this._listenerTeclas = (e) => {
+      // Se apertar I e estiver esperando
       if (
         e.code === "KeyI" &&
         window.estadoJogo.status === window.GAME_STATUS.ESPERA
@@ -525,17 +565,16 @@ const Minigames = {
         this._setarTeclaT(true);
         this._toggleResetUI(false);
 
-        // [NOVO] Atualiza prompts: Esconde o "I" (já iniciou), mantém "O"
+        // Esconde prompt "I" imediatamente
         this._togglePrompts(true, true);
 
+        // Configura Mira Global (Lógica já existente)
         if (window.configMira === false) {
-          console.log("🚫 Minigame Hardcore: Mira Desativada!");
           this._toggleMiraUI(false);
           const bola = document.getElementById("bola");
           if (bola) {
-            if (bola.components["mecanica-arremesso"]) {
+            if (bola.components["mecanica-arremesso"])
               bola.components["mecanica-arremesso"].mostrarTrajetoria = false;
-            }
             if (bola.components["trajetoria-previsao"]) {
               bola.components["trajetoria-previsao"].mostrando = false;
               bola.components["trajetoria-previsao"].pontosEl.forEach((p) =>
@@ -548,10 +587,21 @@ const Minigames = {
         }
 
         this._limparAmbiente();
-        this._atualizarEstado(window.GAME_STATUS.ATIVO);
-        this.desafioSelecionado.iniciar(this._configUsarTimer);
+
+        // [MODIFICADO] Em vez de iniciar direto, chama a contagem
+        this._iniciarContagem(() => {
+          console.log("🚀 GO! Jogo Iniciado.");
+          this._atualizarEstado(window.GAME_STATUS.ATIVO);
+          this.desafioSelecionado.iniciar(this._configUsarTimer);
+        });
       }
+
+      // Tecla O (Sair) - Funciona mesmo na contagem para abortar se quiser
       if (e.code === "KeyO") {
+        // Se cancelar durante a contagem, esconde o overlay
+        const overlay = document.getElementById("countdown-overlay");
+        if (overlay) overlay.classList.add("oculto");
+
         this.pararTotal();
       }
     };
