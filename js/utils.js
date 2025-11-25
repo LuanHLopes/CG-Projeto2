@@ -2,6 +2,36 @@ window.configMira = true;
 
 window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 
+const ICONE_ALERTA = `
+<svg class="toast-icon" viewBox="0 0 24 24">
+  <path d="M12 2L1 21h22L12 2zm0 3.45l8.27 14.28H3.73L12 5.45zM11 10v6h2v-6h-2zm0 8v2h2v-2h-2z"/>
+</svg>`;
+
+window.notificar = function(texto) {
+    const container = document.getElementById("notification-container");
+    if (!container) return;
+
+    const el = document.createElement("div");
+    el.className = "toast-alert";
+    el.innerHTML = `${ICONE_ALERTA} <span>${texto}</span>`;
+    
+    if (window.cestaSelecionada === 1) {
+        el.style.borderLeftColor = "#00aaff"; // Azul
+    } else {
+        el.style.borderLeftColor = "#ffaa00"; // Laranja
+    }
+
+    container.appendChild(el);
+
+    // Remove após 3 segundos
+    setTimeout(() => {
+        el.classList.add("saindo");
+        el.addEventListener("animationend", () => {
+            if(el.parentElement) el.remove();
+        });
+    }, 3000);
+};
+
 window.cestaSelecionada = 1;
 window.tempoCronometro = 90;
 
@@ -15,7 +45,7 @@ window.GAME_MODE = Object.freeze({
 window.GAME_STATUS = Object.freeze({
   DESATIVADO: "DESATIVADO",
   ESPERA: "ESPERA",
-  CONTAGEM: "CONTAGEM", 
+  CONTAGEM: "CONTAGEM",
   ATIVO: "ATIVO",
 });
 

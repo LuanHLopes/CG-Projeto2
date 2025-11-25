@@ -1,5 +1,5 @@
 /* ====================================================================
-   REGISTRO DE SHADER (FEIXE DE LUZ COM DEGRADÊ)
+   REGISTRO DE SHADER (MANTIDO)
 ==================================================================== */
 AFRAME.registerShader("gradient-beam", {
   schema: {
@@ -25,7 +25,7 @@ AFRAME.registerShader("gradient-beam", {
 });
 
 /* ====================================================================
-   MINIGAMES.JS - Versão Final (Timer Opcional + Sem Blink no modo Livre)
+   MINIGAMES.JS (FINAL)
 ==================================================================== */
 
 const Desafios = {
@@ -34,10 +34,11 @@ const Desafios = {
     id: "street21",
     enumMode: window.GAME_MODE.STREET_21,
     nome: "Street 21",
+    // [NOVO] Textos para o Painel
+    objetivo: "Faça exatamente 21 pontos.",
+    regra: "Se estourar 21, você perde.",
+
     META_PONTOS: 21,
-    get descricao() {
-      return `Faça exatamente ${this.META_PONTOS} pontos.`;
-    },
     _listenerPontos: null,
     _listenerTimer: null,
     _timerDelay: null,
@@ -45,15 +46,10 @@ const Desafios = {
 
     iniciar: function (usarTimer = true) {
       this.usandoTimer = usarTimer;
-      const alvo =
-        window.cestaSelecionada === 1 ? "HOME (Azul)" : "GUEST (Amarela)";
       const modoTempo = this.usandoTimer
         ? `${window.tempoCronometro}s`
-        : "SEM LIMITE (TREINO)";
-
-      console.log(
-        `🏀 [STREET 21] INICIADO! Meta: ${this.META_PONTOS} | Tempo: ${modoTempo}`
-      );
+        : "SEM LIMITE";
+      console.log(`🏀 [STREET 21] INICIADO! Tempo: ${modoTempo}`);
 
       if (this.usandoTimer && typeof window.iniciarCronometro === "function") {
         window.iniciarCronometro();
@@ -62,7 +58,6 @@ const Desafios = {
         };
         window.addEventListener("cronometro-zerado", this._listenerTimer);
       } else {
-        // Garante cronometro parado no modo treino
         if (typeof window.pararCronometro === "function")
           window.pararCronometro();
       }
@@ -78,30 +73,21 @@ const Desafios = {
     },
     verificarVitoria: function (total) {
       if (total === this.META_PONTOS) {
-        this.finalizarComEfeito(
-          true,
-          `🏆 VITÓRIA! CRAVOU ${this.META_PONTOS} PONTOS!`
-        );
+        this.finalizarComEfeito(true, `🏆 VITÓRIA! CRAVOU 21 PONTOS!`);
       } else if (total > this.META_PONTOS) {
         this.finalizarComEfeito(false, `💀 DERROTA! Fez ${total} e estourou.`);
       }
     },
     finalizarComEfeito: function (venceu, mensagem) {
       console.log(mensagem);
-
-      // Para o cronômetro se estiver rodando
       if (this.usandoTimer && typeof window.pararCronometro === "function")
         window.pararCronometro();
-
       this.limparListeners();
-
-      // [MODIFICAÇÃO] Só pisca o HUD se o timer estava sendo usado
       if (this.usandoTimer) {
         const timerEl = document.getElementById("grupo-tempo");
         if (timerEl && timerEl.components["cronometro-tempo"])
           timerEl.components["cronometro-tempo"].blinkHud();
       }
-
       this._timerDelay = setTimeout(() => {
         Minigames.pararTotal();
       }, 3500);
@@ -136,13 +122,14 @@ const Desafios = {
     id: "voltaAoMundo",
     enumMode: window.GAME_MODE.VOLTA_AO_MUNDO,
     nome: "Volta ao Mundo",
-    descricao: "Acerte 5 cestas de locais diferentes.",
+    // [NOVO] Textos para o Painel
+    objetivo: "Acerte 5 cestas das zonas marcadas.",
+    regra: "Arremesse de DENTRO da luz verde.",
 
     usandoTimer: true,
     _listenerPontos: null,
     _listenerTimer: null,
     _timerDelay: null,
-
     cestasFeitas: 0,
     META_CESTAS: 5,
     historicoPosicoes: [],
@@ -154,27 +141,15 @@ const Desafios = {
       this.historicoPosicoes = [];
       this.posicaoAtual = null;
 
-      const idAlvo = window.cestaSelecionada;
-      const nomeCesta = idAlvo === 1 ? "HOME" : "GUEST";
-
-      const textoTempo = this.usandoTimer
-        ? `COM TIMER (${window.tempoCronometro}s)`
-        : "SEM TIMER (LIVRE)";
-
-      console.log(
-        `🌍 [VOLTA AO MUNDO] Alvo: ${nomeCesta} | Modo: ${textoTempo}`
-      );
-      console.log("📍 Regra: Arremesse de DENTRO do feixe de luz.");
+      const textoTempo = this.usandoTimer ? `COM TIMER` : "SEM TIMER";
+      console.log(`🌍 [VOLTA AO MUNDO] Modo: ${textoTempo}`);
 
       this.gerarNovaPosicao();
 
       if (this.usandoTimer && typeof window.iniciarCronometro === "function") {
         window.iniciarCronometro();
         this._listenerTimer = () => {
-          this.finalizarComEfeito(
-            false,
-            "⏰ TEMPO ESGOTADO! Tente ser mais rápido."
-          );
+          this.finalizarComEfeito(false, "⏰ TEMPO ESGOTADO!");
         };
         window.addEventListener("cronometro-zerado", this._listenerTimer);
       } else {
@@ -187,7 +162,7 @@ const Desafios = {
         if (idEvento !== parseInt(window.cestaSelecionada)) return;
 
         if (!this.validarPosicaoArremesso()) {
-          console.warn("🚫 PONTO INVALIDADO: Fora da zona!");
+          window.notificar("PONTO INVÁLIDO: FORA DA ZONA");
           Minigames._piscarMarcadorErro();
           this.reverterPontuacaoVisual(e.detail.pontosFeitos, e.detail.time);
           return;
@@ -201,7 +176,7 @@ const Desafios = {
         if (this.cestasFeitas >= this.META_CESTAS) {
           this.finalizarComEfeito(
             true,
-            "🏆 PARABÉNS! VOCÊ COMPLETOU A VOLTA AO MUNDO!"
+            "🏆 PARABÉNS! COMPLETOU A VOLTA AO MUNDO!"
           );
         } else {
           this.gerarNovaPosicao();
@@ -264,7 +239,7 @@ const Desafios = {
         randX = Math.random() * (limiteX * 2) - limiteX;
         randZ = Math.random() * (maxZ - minZ) + minZ;
         const distanciaAteAlvo = Math.sqrt(
-          Math.pow(randX - 0, 2) + Math.pow(randZ - zPosteAlvo, 2)
+          Math.pow(randX, 2) + Math.pow(randZ - zPosteAlvo, 2)
         );
         let longeDoHistorico = true;
         for (let pos of this.historicoPosicoes) {
@@ -292,26 +267,19 @@ const Desafios = {
 
     finalizarComEfeito: function (venceu, mensagem) {
       console.log(mensagem);
-
       if (this.usandoTimer && typeof window.pararCronometro === "function")
         window.pararCronometro();
-
       this.limparListeners();
-
-      // [MODIFICAÇÃO] Só pisca HUD se timer estava sendo usado
       if (this.usandoTimer) {
         const timerEl = document.getElementById("grupo-tempo");
         if (timerEl && timerEl.components["cronometro-tempo"])
           timerEl.components["cronometro-tempo"].blinkHud();
       }
-
       Minigames._esconderMarcador();
-
       this._timerDelay = setTimeout(() => {
         Minigames.pararTotal();
       }, 3500);
     },
-
     limparListeners: function () {
       if (this._listenerPontos) {
         window.removeEventListener(
@@ -342,7 +310,8 @@ const Desafios = {
     id: "onFire",
     enumMode: window.GAME_MODE.ON_FIRE,
     nome: "On Fire",
-    descricao: "Modo Arcade 60s.",
+    objetivo: "Faça o máximo de pontos.",
+    regra: "Acerte cestas consecutivas.",
     iniciar: function () {
       console.log("Em breve...");
     },
@@ -357,8 +326,6 @@ const Minigames = {
   _listenerTeclas: null,
   _configUsarTimer: true,
 
-  // ... (MANTENHA AS FUNÇÕES _getMarcador, _moverMarcador, _piscarMarcadorErro, _esconderMarcador IGUAIS) ...
-  // Vou omitir para economizar espaço, mas você NÃO deve apagá-las.
   _getMarcador: function () {
     let marcador = document.getElementById("marcador-minigame");
     if (!marcador) {
@@ -379,6 +346,7 @@ const Minigames = {
       beam.setAttribute("height", "2.0");
       beam.setAttribute("position", "0 1.0 0");
       beam.setAttribute("radius", "1.95");
+      beam.setAttribute("segments-radial", "128");
       beam.setAttribute("open-ended", "true");
       beam.setAttribute("side", "double");
       beam.setAttribute("material", {
@@ -430,7 +398,6 @@ const Minigames = {
     const m = document.getElementById("marcador-minigame");
     if (m) m.setAttribute("visible", false);
   },
-  // ... FIM DAS FUNÇÕES DE MARCADOR ...
 
   _atualizarEstado: function (novoStatus, novoModo = null) {
     window.estadoJogo.status = novoStatus;
@@ -447,31 +414,99 @@ const Minigames = {
     if (el) el.style.display = mostrar ? "flex" : "none";
   },
 
-  // [NOVO] Controla os prompts I/O no canto inferior
   _togglePrompts: function (mostrar, apenasSair = false) {
     const prompts = document.getElementById("minigame-prompts");
     const hintG = document.getElementById("hint-menu");
-
     if (!prompts) return;
-
     if (mostrar) {
       prompts.classList.remove("oculto");
-      // Gerencia o conflito com o hint G
       if (hintG) hintG.classList.add("deslocado");
-
-      // Se o jogo já começou, esconde o "I" e deixa só o "O"
       const itens = prompts.querySelectorAll(".prompt-item");
       if (itens.length >= 2) {
         if (apenasSair) {
-          itens[0].style.display = "none"; // Esconde I
+          itens[0].style.display = "none";
         } else {
-          itens[0].style.display = "flex"; // Mostra I
+          itens[0].style.display = "flex";
         }
       }
     } else {
       prompts.classList.add("oculto");
       if (hintG) hintG.classList.remove("deslocado");
     }
+  },
+
+  _toggleInfo: function (mostrar, desafio = null) {
+    const painel = document.getElementById("minigame-info");
+    if (!painel) return;
+
+    if (mostrar && desafio) {
+      const elTitulo = document.getElementById("info-titulo");
+      const elCesta = document.getElementById("info-cesta");
+
+      // Define cor e texto baseados na cesta selecionada
+      let corTema, nomeCesta;
+
+      if (window.cestaSelecionada === 1) {
+        corTema = "#00aaff"; // Azul (Home)
+        nomeCesta = "HOME (AZUL)";
+      } else {
+        corTema = "#ffaa00"; // Laranja (Guest)
+        nomeCesta = "GUEST (AMARELA)";
+      }
+
+      // Aplica os textos
+      elTitulo.innerText = desafio.nome;
+      elCesta.innerText = nomeCesta;
+      document.getElementById("info-objetivo").innerText =
+        desafio.objetivo || "-";
+      document.getElementById("info-regra").innerText = desafio.regra || "-";
+
+      // Aplica a cor dinâmica aos elementos visuais
+      painel.style.borderRightColor = corTema; // Muda a borda lateral
+      elTitulo.style.color = corTema; // Muda o título
+      elCesta.style.color = corTema; // Muda o texto da cesta
+
+      painel.classList.remove("oculto");
+    } else {
+      painel.classList.add("oculto");
+    }
+  },
+
+  atualizarInfo: function () {
+    if (
+      this.desafioSelecionado &&
+      window.estadoJogo.status === window.GAME_STATUS.ESPERA
+    ) {
+      this._toggleInfo(true, this.desafioSelecionado);
+    }
+  },
+
+  _iniciarContagem: function (callbackInicio) {
+    const overlay = document.getElementById("countdown-overlay");
+    const texto = document.getElementById("countdown-text");
+    if (!overlay || !texto) {
+      callbackInicio();
+      return;
+    }
+
+    this._atualizarEstado(window.GAME_STATUS.CONTAGEM);
+    overlay.classList.remove("oculto");
+    let conta = 3;
+    texto.innerText = conta;
+
+    const intervalo = setInterval(() => {
+      conta--;
+      if (conta > 0) {
+        texto.innerText = conta;
+      } else {
+        clearInterval(intervalo);
+        texto.innerText = "VAI!";
+        setTimeout(() => {
+          overlay.classList.add("oculto");
+          callbackInicio();
+        }, 500);
+      }
+    }, 1000);
   },
 
   _setarTeclaT: function (permitido) {
@@ -487,7 +522,7 @@ const Minigames = {
   _limparAmbiente: function () {
     if (typeof window.zerarCronometro === "function") window.zerarCronometro();
     if (typeof window.resetarPlacar === "function") window.resetarPlacar();
-    console.log("🧹 Ambiente limpo para novo jogo.");
+    console.log("🧹 Ambiente limpo.");
   },
 
   iniciar: function (idDesafio, usarTimer = true) {
@@ -501,74 +536,37 @@ const Minigames = {
       this._atualizarEstado(window.GAME_STATUS.ESPERA, desafio.enumMode);
       this._configurarControles();
 
-      // [NOVO] Mostra os prompts de espera (I e O) e move o G
       this._togglePrompts(true, false);
+      this._toggleInfo(true, desafio);
 
-      console.log(`⚠️ PREPARADO: ${desafio.nome}`);
-      console.log(
-        `⏱️ MODO TIMER: ${usarTimer ? "ATIVADO" : "DESATIVADO (LIVRE)"}`
-      );
-      console.log(`👉 'I' para INICIAR | 'O' para CANCELAR`);
+      console.log(`⚠️ ESPERA: ${desafio.nome}`);
       return `Aguardando start...`;
     } else {
       console.error(`❌ Desafio '${idDesafio}' não encontrado.`);
       return null;
     }
   },
-  // Função para gerenciar a contagem regressiva visual
-  _iniciarContagem: function (callbackInicio) {
-    const overlay = document.getElementById("countdown-overlay");
-    const texto = document.getElementById("countdown-text");
-
-    if (!overlay || !texto) {
-      callbackInicio();
-      return;
-    }
-
-    // 1. Configura Estado e Visual
-    this._atualizarEstado(window.GAME_STATUS.CONTAGEM);
-    overlay.classList.remove("oculto");
-
-    // 2. Sequência de Contagem
-    let conta = 3;
-    texto.innerText = conta;
-
-    const intervalo = setInterval(() => {
-      conta--;
-      if (conta > 0) {
-        texto.innerText = conta;
-      } else {
-        // 3. Terminou (GO!)
-        clearInterval(intervalo);
-        texto.innerText = "VAI!";
-
-        // Pequeno delay para mostrar o GO antes de sumir
-        setTimeout(() => {
-          overlay.classList.add("oculto");
-          // Chama a função real de iniciar o jogo
-          callbackInicio();
-        }, 500);
-      }
-    }, 1000); // 1 segundo por número
-  },
 
   _configurarControles: function () {
     if (this._listenerTeclas)
       window.removeEventListener("keydown", this._listenerTeclas);
-
     this._listenerTeclas = (e) => {
-      // Se apertar I e estiver esperando
+      // TECLA I (Iniciar)
       if (
         e.code === "KeyI" &&
         window.estadoJogo.status === window.GAME_STATUS.ESPERA
       ) {
+        // [NOVO] Força o fechamento do Menu F (Placar) se estiver aberto
+        const placarEl = document.getElementById("placar-principal");
+        if (placarEl && placarEl.components["menu-placar"]) {
+          placarEl.components["menu-placar"].fecharMenuTotal();
+        }
+
         this._setarTeclaT(true);
         this._toggleResetUI(false);
-
-        // Esconde prompt "I" imediatamente
         this._togglePrompts(true, true);
 
-        // Configura Mira Global (Lógica já existente)
+        // Lógica da Mira Global
         if (window.configMira === false) {
           this._toggleMiraUI(false);
           const bola = document.getElementById("bola");
@@ -588,20 +586,17 @@ const Minigames = {
 
         this._limparAmbiente();
 
-        // [MODIFICADO] Em vez de iniciar direto, chama a contagem
         this._iniciarContagem(() => {
-          console.log("🚀 GO! Jogo Iniciado.");
+          console.log("🚀 VAI! Jogo Iniciado.");
           this._atualizarEstado(window.GAME_STATUS.ATIVO);
           this.desafioSelecionado.iniciar(this._configUsarTimer);
         });
       }
 
-      // Tecla O (Sair) - Funciona mesmo na contagem para abortar se quiser
+      // TECLA O (Sair)
       if (e.code === "KeyO") {
-        // Se cancelar durante a contagem, esconde o overlay
         const overlay = document.getElementById("countdown-overlay");
         if (overlay) overlay.classList.add("oculto");
-
         this.pararTotal();
       }
     };
@@ -615,12 +610,12 @@ const Minigames = {
         window.removeEventListener("keydown", this._listenerTeclas);
         this._listenerTeclas = null;
       }
+
       this._setarTeclaT(true);
       this._toggleResetUI(true);
       this._toggleMiraUI(true);
-
-      // [NOVO] Esconde todos os prompts e restaura posição do G
       this._togglePrompts(false);
+      this._toggleInfo(false); // Esconde info ao sair
 
       const txtMira = document.getElementById("txt-mira");
       if (txtMira) txtMira.innerText = "Desativar Mira";

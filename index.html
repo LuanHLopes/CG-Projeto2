@@ -26,6 +26,8 @@
   </head>
 
   <body>
+    <div id="notification-container"></div>
+
     <div id="tela-loading">
       <div class="conteudo-loading">
         <h1>BASKETBALL.IO</h1>
@@ -1889,6 +1891,26 @@
     <!-- TELAS DOS MINIGAMES -->
     <div id="countdown-overlay" class="oculto">
       <div id="countdown-text">3</div>
+    </div>
+
+    <div id="minigame-info" class="oculto">
+      <h2 id="info-titulo">NOME DO DESAFIO</h2>
+
+      <div class="info-row">
+        <span class="info-label">CESTA ALVO</span>
+        <span id="info-cesta" class="info-text" style="color: #ffd700"
+          >HOME</span
+        >
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">OBJETIVO</span>
+        <span id="info-objetivo" class="info-text">...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">REGRA</span>
+        <span id="info-regra" class="info-text">...</span>
+      </div>
     </div>
     <!-- FIM TELAS DOS MINIGAMES -->
   </body>

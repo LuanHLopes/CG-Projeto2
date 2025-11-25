@@ -335,3 +335,124 @@ body {
     opacity: 0.9;
   }
 }
+
+/* === PAINEL DE INFORMAÇÕES (TOPO DIREITO) === */
+#minigame-info {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 280px;
+  background-color: rgba(0, 0, 0, 0.85); /* Fundo bem escuro */
+  border-right: 4px solid #00aaff; /* Detalhe visual na direita */
+  border-radius: 8px 0 0 8px;
+  padding: 15px 20px;
+  font-family: "Roboto", sans-serif;
+  color: white;
+  z-index: 9990;
+  transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.4s ease;
+  box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+#minigame-info.oculto {
+  opacity: 0;
+  transform: translateX(50px); /* Desliza levemente para fora */
+  pointer-events: none;
+}
+
+#info-titulo {
+  margin: 0 0 15px 0;
+  font-family: "Electrolize", sans-serif;
+  font-size: 22px;
+  color: #00aaff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 8px;
+  text-align: right;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  align-items: flex-end; /* Alinha tudo à direita */
+  text-align: right;
+}
+
+.info-label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #888;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.info-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #eee;
+  line-height: 1.3;
+}
+
+/* === NOTIFICAÇÕES TOAST (TOPO ESQUERDO) === */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10001; /* Acima de tudo */
+  pointer-events: none; /* Permite clicar através */
+}
+
+.toast-alert {
+  background-color: rgba(15, 15, 15, 0.95);
+  border-left: 4px solid #ffd700; /* Amarelo Alerta */
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 4px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+
+  font-family: "Roboto", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideInToast 0.3s forwards;
+  pointer-events: auto;
+}
+
+.toast-alert.saindo {
+  animation: fadeOutToast 0.3s forwards;
+}
+
+/* Ícone SVG amarelo dentro do alerta */
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  fill: #ffd700;
+  flex-shrink: 0;
+}
+
+@keyframes slideInToast {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOutToast {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

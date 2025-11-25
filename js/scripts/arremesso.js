@@ -52,7 +52,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
         window.estadoJogo.status === window.GAME_STATUS.ATIVO &&
         window.configMira === false
       ) {
-        console.log("🚫 Mira bloqueada pelas regras do jogo.");
+        window.notificar("MIRA DESATIVADA NESTE MODO");
         return;
       }
 
@@ -87,11 +87,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
         const DISTANCIA_MAXIMA = 8.0;
 
         if (distancia > DISTANCIA_MAXIMA) {
-          console.log(
-            `🚫 Você está muito longe! Chegue mais perto para pegar a bola. (Distância: ${distancia.toFixed(
-              1
-            )}m)`
-          );
+          window.notificar("APROXIME-SE PARA PEGAR A BOLA"); // <--- MUDOU
           return;
         }
       }

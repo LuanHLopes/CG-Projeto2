@@ -75,9 +75,7 @@ AFRAME.registerComponent("sensor", {
       const idAlvo = parseInt(window.cestaSelecionada);
 
       if (idAtual !== idAlvo) {
-        console.warn(
-          `🚫 Cesta bloqueada! Você acertou na ${idAtual}, mas o alvo é ${idAlvo}.`
-        );
+        window.notificar("CESTA INCORRETA");
         return;
       }
     }
@@ -189,7 +187,7 @@ AFRAME.registerComponent("controle-placar", {
         window.estadoJogo &&
         window.estadoJogo.status === window.GAME_STATUS.ATIVO
       ) {
-        console.warn("🚫 Reset bloqueado durante o minigame!");
+        window.notificar("REINICIO BLOQUEADO DURANTE JOGO");
         return;
       }
       this.resetarLogica();

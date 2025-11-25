@@ -408,6 +408,7 @@ AFRAME.registerComponent("menu-placar", {
         window.setarTempoCronometro(valoresTimer[idx]);
         marcarSelecionado(subItensTimer, valoresTimer[idx], valoresTimer);
         fecharSubmenusInterno();
+        if (window.Minigames) window.Minigames.atualizarInfo();
       });
     });
 
@@ -416,6 +417,7 @@ AFRAME.registerComponent("menu-placar", {
         window.cestaSelecionada = valoresCesta[idx];
         marcarSelecionado(subItensCesta, valoresCesta[idx], valoresCesta);
         fecharSubmenusInterno();
+        if (window.Minigames) window.Minigames.atualizarInfo();
       });
     });
 
@@ -431,7 +433,8 @@ AFRAME.registerComponent("menu-placar", {
       ref.bgItem.addEventListener("click", () => {
         const usarTimer = idx === 0;
         if (window.Minigames) window.Minigames.iniciar("street21", usarTimer);
-         fecharSubmenusInterno();
+        fecharSubmenusInterno();
+        this.fecharMenuTotal();
       });
     });
 
@@ -440,7 +443,8 @@ AFRAME.registerComponent("menu-placar", {
         const usarTimer = idx === 0;
         if (window.Minigames)
           window.Minigames.iniciar("voltaAoMundo", usarTimer);
-         fecharSubmenusInterno();
+        fecharSubmenusInterno();
+        this.fecharMenuTotal();
       });
     });
 
@@ -553,6 +557,15 @@ AFRAME.registerComponent("menu-placar", {
 
   toggleMenu: function (e) {
     if (e.code === "KeyF") {
+      if (
+        window.estadoJogo &&
+        (window.estadoJogo.status === "ATIVO" ||
+          window.estadoJogo.status === "CONTAGEM")
+      ) {
+        window.notificar("INTERAÇÃO BLOQUEADA AGORA");
+        return;
+      }
+
       const dist = this.calcularDistancia();
       if (
         dist === null ||
