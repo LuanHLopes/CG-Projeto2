@@ -357,6 +357,8 @@ const Minigames = {
   _listenerTeclas: null,
   _configUsarTimer: true,
 
+  // ... (MANTENHA AS FUNÇÕES _getMarcador, _moverMarcador, _piscarMarcadorErro, _esconderMarcador IGUAIS) ...
+  // Vou omitir para economizar espaço, mas você NÃO deve apagá-las.
   _getMarcador: function () {
     let marcador = document.getElementById("marcador-minigame");
     if (!marcador) {
@@ -392,7 +394,6 @@ const Minigames = {
     }
     return marcador;
   },
-
   _moverMarcador: function (x, y, z) {
     const m = this._getMarcador();
     m.removeAttribute("animation");
@@ -410,7 +411,6 @@ const Minigames = {
       );
     }, 20);
   },
-
   _piscarMarcadorErro: function () {
     const m = this._getMarcador();
     if (!m) return;
@@ -425,11 +425,12 @@ const Minigames = {
       if (beam) beam.setAttribute("material", "colorBottom", corNormal);
     }, 500);
   },
-
   _esconderMarcador: function () {
     const m = document.getElementById("marcador-minigame");
     if (m) m.setAttribute("visible", false);
   },
+  // ... FIM DAS FUNÇÕES DE MARCADOR ...
+
   _atualizarEstado: function (novoStatus, novoModo = null) {
     window.estadoJogo.status = novoStatus;
     if (novoModo) window.estadoJogo.modo = novoModo;
@@ -443,6 +444,33 @@ const Minigames = {
   _toggleMiraUI: function (mostrar) {
     const el = document.getElementById("row-btn-mira");
     if (el) el.style.display = mostrar ? "flex" : "none";
+  },
+
+  // [NOVO] Controla os prompts I/O no canto inferior
+  _togglePrompts: function (mostrar, apenasSair = false) {
+    const prompts = document.getElementById("minigame-prompts");
+    const hintG = document.getElementById("hint-menu");
+
+    if (!prompts) return;
+
+    if (mostrar) {
+      prompts.classList.remove("oculto");
+      // Gerencia o conflito com o hint G
+      if (hintG) hintG.classList.add("deslocado");
+
+      // Se o jogo já começou, esconde o "I" e deixa só o "O"
+      const itens = prompts.querySelectorAll(".prompt-item");
+      if (itens.length >= 2) {
+        if (apenasSair) {
+          itens[0].style.display = "none"; // Esconde I
+        } else {
+          itens[0].style.display = "flex"; // Mostra I
+        }
+      }
+    } else {
+      prompts.classList.add("oculto");
+      if (hintG) hintG.classList.remove("deslocado");
+    }
   },
 
   _setarTeclaT: function (permitido) {
@@ -471,6 +499,10 @@ const Minigames = {
       this._configUsarTimer = usarTimer;
       this._atualizarEstado(window.GAME_STATUS.ESPERA, desafio.enumMode);
       this._configurarControles();
+
+      // [NOVO] Mostra os prompts de espera (I e O) e move o G
+      this._togglePrompts(true, false);
+
       console.log(`⚠️ PREPARADO: ${desafio.nome}`);
       console.log(
         `⏱️ MODO TIMER: ${usarTimer ? "ATIVADO" : "DESATIVADO (LIVRE)"}`
@@ -492,6 +524,9 @@ const Minigames = {
       ) {
         this._setarTeclaT(true);
         this._toggleResetUI(false);
+
+        // [NOVO] Atualiza prompts: Esconde o "I" (já iniciou), mantém "O"
+        this._togglePrompts(true, true);
 
         if (window.configMira === false) {
           console.log("🚫 Minigame Hardcore: Mira Desativada!");
@@ -533,6 +568,10 @@ const Minigames = {
       this._setarTeclaT(true);
       this._toggleResetUI(true);
       this._toggleMiraUI(true);
+
+      // [NOVO] Esconde todos os prompts e restaura posição do G
+      this._togglePrompts(false);
+
       const txtMira = document.getElementById("txt-mira");
       if (txtMira) txtMira.innerText = "Desativar Mira";
 

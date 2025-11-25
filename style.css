@@ -240,3 +240,59 @@ body {
   opacity: 0;
   transform: translateY(10px);
 }
+
+/* === PROMPTS MINIGAME (Canto Inferior Esquerdo) === */
+#minigame-prompts {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  z-index: 9995; /* Fica acima do hint-menu padrão se colidir */
+  transition: opacity 0.3s ease;
+}
+
+#minigame-prompts .key-badge {
+  background-color: rgba(0, 0, 0, 0.6); 
+  
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  
+  border-radius: 5px; 
+  
+  color: #ffffff;
+  text-shadow: none;
+  
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0; 
+}
+
+#minigame-prompts.oculto {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prompt-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prompt-label {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+#hint-menu.deslocado {
+  transform: translateX(190px);
+}
+
+#hint-menu.oculto.deslocado {
+  opacity: 0;
+  transform: translateX(190px) translateY(10px);
+}

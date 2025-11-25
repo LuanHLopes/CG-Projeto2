@@ -46,21 +46,18 @@ AFRAME.registerComponent("menu-placar", {
 
     window.tempoCronometro = window.tempoCronometro || 90;
     window.cestaSelecionada = window.cestaSelecionada || 1;
-    // Garante que a configMira existe
     if (typeof window.configMira === "undefined") window.configMira = true;
 
     // === 2. ESTRUTURA VISUAL ===
     const container = document.createElement("a-entity");
     container.setAttribute("position", "4.35 10.0 -8.3");
     container.setAttribute("rotation", "0 -10 0");
-
-    // Começa invisível para só aparecer quando entrar na área
     container.setAttribute("visible", false);
 
     this.el.appendChild(container);
     this.container = container;
 
-    // Decoração (Linhas e Bolinha)
+    // Decoração
     const bolaAncora = document.createElement("a-circle");
     bolaAncora.setAttribute("radius", "0.03");
     bolaAncora.setAttribute("color", "white");
@@ -86,7 +83,7 @@ AFRAME.registerComponent("menu-placar", {
     });
     container.appendChild(linhaHorizontal);
 
-    // Título "Placar"
+    // Título e Prompt
     const titulo = document.createElement("a-text");
     titulo.setAttribute("value", "Placar");
     titulo.setAttribute("font", "roboto");
@@ -96,7 +93,6 @@ AFRAME.registerComponent("menu-placar", {
     titulo.setAttribute("position", `0.9 0.5 ${profundidade}`);
     container.appendChild(titulo);
 
-    // Prompt "F Interagir"
     const grupoF = document.createElement("a-entity");
     grupoF.setAttribute("position", `1.2 0.15 ${profundidade}`);
     container.appendChild(grupoF);
@@ -142,14 +138,14 @@ AFRAME.registerComponent("menu-placar", {
     container.appendChild(menuPrincipal);
     this.menuPrincipal = menuPrincipal;
 
-    const criarItem = (parent, texto, yOffset, temCirculo) => {
+    const criarItem = (parent, texto, yOffset, temCirculo, largura = 2.2) => {
       const itemGroup = document.createElement("a-entity");
       itemGroup.setAttribute("position", `0.85 ${yOffset} 0`);
       parent.appendChild(itemGroup);
 
       const bgItem = document.createElement("a-plane");
       bgItem.setAttribute("src", "#tex-menu-item-white");
-      bgItem.setAttribute("width", "2.2");
+      bgItem.setAttribute("width", largura.toString());
       bgItem.setAttribute("height", "0.4");
       bgItem.setAttribute("transparent", "true");
       bgItem.setAttribute("shader", "flat");
@@ -172,57 +168,65 @@ AFRAME.registerComponent("menu-placar", {
 
       itemGroup.appendChild(bgItem);
 
+      // Lógica de posição do texto
+      const textX = -(largura / 2) + 0.2;
+
       const textoItem = document.createElement("a-text");
       textoItem.setAttribute("value", texto);
       textoItem.setAttribute("font", "roboto");
-      textoItem.setAttribute("position", "-0.95 0 0.01");
+      textoItem.setAttribute("position", `${textX} 0 0.01`);
       itemGroup.appendChild(textoItem);
 
       let fundo = null;
       if (temCirculo) {
+        // Lógica de posição do círculo
+        const offset = largura > 2.5 ? 0.15 : 0.25;
+        const circleX = largura / 2 - offset;
+
         fundo = document.createElement("a-circle");
         fundo.setAttribute("radius", "0.09");
         fundo.setAttribute("color", "black");
         fundo.setAttribute("opacity", "0");
-        fundo.setAttribute("position", "0.86 0 0.01");
+        fundo.setAttribute("position", `${circleX} 0 0.01`);
         itemGroup.appendChild(fundo);
 
         const borda = document.createElement("a-torus");
         borda.setAttribute("radius", "0.1");
         borda.setAttribute("radius-tubular", "0.005");
-        borda.setAttribute("position", "0.86 0 0.012");
+        borda.setAttribute("position", `${circleX} 0 0.012`);
         itemGroup.appendChild(borda);
       }
       return { bgItem, itemGroup, fundo };
     };
 
-    // --- LISTA DE ITENS (ATUALIZADA COM MIRA) ---
+    // --- ITENS MENU PRINCIPAL (Largura 2.7) ---
+    const W_MAIN = 2.7;
     const principalItens = [];
-
-    // Index 0: Cesta
-    principalItens.push(criarItem(menuPrincipal, "Selecionar Cesta", 1.225));
-
-    // Index 1: Timer
-    principalItens.push(criarItem(menuPrincipal, "Definir Timer", 0.775));
-
-    // Index 2: Mira [NOVO]
-    const textoMira = window.configMira ? "Mira: ATIVADA" : "Mira: DESATIVADA";
-    principalItens.push(criarItem(menuPrincipal, textoMira, 0.325));
-
-    // Index 3: Street 21
-    principalItens.push(criarItem(menuPrincipal, "Desafio Street 21", -0.125));
-
-    // Index 4: Volta ao Mundo
     principalItens.push(
-      criarItem(menuPrincipal, "Desafio Volta ao Mundo", -0.575)
+      criarItem(menuPrincipal, "Selecionar Cesta", 1.225, false, W_MAIN)
+    );
+    principalItens.push(
+      criarItem(menuPrincipal, "Definir Timer", 0.775, false, W_MAIN)
+    );
+    principalItens.push(
+      criarItem(menuPrincipal, "Trajetoria da Bola", 0.325, false, W_MAIN)
+    );
+    principalItens.push(
+      criarItem(menuPrincipal, "Desafio Street 21", -0.125, false, W_MAIN)
+    );
+    principalItens.push(
+      criarItem(menuPrincipal, "Desafio Volta ao Mundo", -0.575, false, W_MAIN)
+    );
+    principalItens.push(
+      criarItem(menuPrincipal, "Desafio On Fire", -1.025, false, W_MAIN)
     );
 
-    // Index 5: On Fire
-    principalItens.push(criarItem(menuPrincipal, "Desafio On Fire", -1.025));
+    // === 4. SUBMENUS (Posição Ajustada para 5.7) ===
+    const SUBMENU_X = 5.7;
 
-    // === 4. SUBMENUS ===
+    // Submenu Timer
     const submenuTimer = document.createElement("a-entity");
-    submenuTimer.setAttribute("position", `5.4 0.8 ${profundidade}`);
+    submenuTimer.setAttribute("position", `${SUBMENU_X} 0.8 ${profundidade}`);
     submenuTimer.setAttribute("visible", false);
     submenuTimer.setAttribute("scale", "0 0 0");
     container.appendChild(submenuTimer);
@@ -230,7 +234,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubTimer = document.createElement("a-plane");
     bgSubTimer.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubTimer.setAttribute("width", "2.4");
+    bgSubTimer.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
     bgSubTimer.setAttribute("height", "1.5");
     bgSubTimer.setAttribute("transparent", "true");
     bgSubTimer.setAttribute("opacity", "1");
@@ -238,8 +242,9 @@ AFRAME.registerComponent("menu-placar", {
     bgSubTimer.setAttribute("position", "0.85 -0.45 -0.01");
     submenuTimer.appendChild(bgSubTimer);
 
+    // Submenu Cesta
     const submenuCesta = document.createElement("a-entity");
-    submenuCesta.setAttribute("position", `5.4 1.25 ${profundidade}`);
+    submenuCesta.setAttribute("position", `${SUBMENU_X} 1.25 ${profundidade}`);
     submenuCesta.setAttribute("visible", false);
     submenuCesta.setAttribute("scale", "0 0 0");
     container.appendChild(submenuCesta);
@@ -247,7 +252,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubCesta = document.createElement("a-plane");
     bgSubCesta.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubCesta.setAttribute("width", "2.4");
+    bgSubCesta.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
     bgSubCesta.setAttribute("height", "1.0");
     bgSubCesta.setAttribute("transparent", "true");
     bgSubCesta.setAttribute("opacity", "1");
@@ -255,50 +260,135 @@ AFRAME.registerComponent("menu-placar", {
     bgSubCesta.setAttribute("position", "0.85 -0.225 -0.01");
     submenuCesta.appendChild(bgSubCesta);
 
+    // Submenu Mira
+    const submenuMira = document.createElement("a-entity");
+    submenuMira.setAttribute("position", `${SUBMENU_X} 0.35 ${profundidade}`);
+    submenuMira.setAttribute("visible", false);
+    submenuMira.setAttribute("scale", "0 0 0");
+    container.appendChild(submenuMira);
+    this.submenuMira = submenuMira;
+
+    const bgSubMira = document.createElement("a-plane");
+    bgSubMira.setAttribute("src", "#tex-submenu-bg-square");
+    bgSubMira.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubMira.setAttribute("height", "1.0");
+    bgSubMira.setAttribute("transparent", "true");
+    bgSubMira.setAttribute("opacity", "1");
+    bgSubMira.setAttribute("color", "#222222");
+    bgSubMira.setAttribute("position", "0.85 -0.225 -0.01");
+    submenuMira.appendChild(bgSubMira);
+
+    // Submenu Street 21
+    const submenuStreet = document.createElement("a-entity");
+    submenuStreet.setAttribute(
+      "position",
+      `${SUBMENU_X} -0.125 ${profundidade}`
+    );
+    submenuStreet.setAttribute("visible", false);
+    submenuStreet.setAttribute("scale", "0 0 0");
+    container.appendChild(submenuStreet);
+    this.submenuStreet = submenuStreet;
+
+    const bgSubStreet = document.createElement("a-plane");
+    bgSubStreet.setAttribute("src", "#tex-submenu-bg-square");
+    bgSubStreet.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubStreet.setAttribute("height", "1.0");
+    bgSubStreet.setAttribute("transparent", "true");
+    bgSubStreet.setAttribute("opacity", "1");
+    bgSubStreet.setAttribute("color", "#222222");
+    bgSubStreet.setAttribute("position", "0.85 -0.225 -0.01");
+    submenuStreet.appendChild(bgSubStreet);
+
+    // Submenu Volta ao Mundo
+    const submenuVolta = document.createElement("a-entity");
+    submenuVolta.setAttribute(
+      "position",
+      `${SUBMENU_X} -0.575 ${profundidade}`
+    );
+    submenuVolta.setAttribute("visible", false);
+    submenuVolta.setAttribute("scale", "0 0 0");
+    container.appendChild(submenuVolta);
+    this.submenuVolta = submenuVolta;
+
+    const bgSubVolta = document.createElement("a-plane");
+    bgSubVolta.setAttribute("src", "#tex-submenu-bg-square");
+    bgSubVolta.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubVolta.setAttribute("height", "1.0");
+    bgSubVolta.setAttribute("transparent", "true");
+    bgSubVolta.setAttribute("opacity", "1");
+    bgSubVolta.setAttribute("color", "#222222");
+    bgSubVolta.setAttribute("position", "0.85 -0.225 -0.01");
+    submenuVolta.appendChild(bgSubVolta);
+
+    // Linha de Conexão
     const linhaConexao = document.createElement("a-plane");
     linhaConexao.setAttribute("color", "#222222");
     linhaConexao.setAttribute("opacity", "0.9");
-    linhaConexao.setAttribute("width", "0.22");
+    linhaConexao.setAttribute("width", "0.3");
     linhaConexao.setAttribute("height", "0.035");
     linhaConexao.setAttribute("visible", false);
     container.appendChild(linhaConexao);
     this.linhaConexao = linhaConexao;
 
-    // === LÓGICA DE ITENS DOS SUBMENUS ===
+    // === LÓGICA DE ITENS DOS SUBMENUS (Largura 2.1) ===
+    const W_SUB = 2.1; // [AJUSTADO PARA 2.1]
+
     const valoresTimer = [30, 60, 90];
     const subItensTimer = [
-      criarItem(submenuTimer, "30s", 0, true),
-      criarItem(submenuTimer, "60s", -0.45, true),
-      criarItem(submenuTimer, "90s", -0.9, true),
+      criarItem(submenuTimer, "30s", 0, true, W_SUB),
+      criarItem(submenuTimer, "60s", -0.45, true, W_SUB),
+      criarItem(submenuTimer, "90s", -0.9, true, W_SUB),
     ];
 
     const valoresCesta = [1, 2];
     const subItensCesta = [
-      criarItem(submenuCesta, "Cesta Home", 0, true),
-      criarItem(submenuCesta, "Cesta Guest", -0.45, true),
+      criarItem(submenuCesta, "Cesta Home", 0, true, W_SUB),
+      criarItem(submenuCesta, "Cesta Guest", -0.45, true, W_SUB),
+    ];
+
+    const valoresMira = [true, false];
+    const subItensMira = [
+      criarItem(submenuMira, "Ativado", 0, true, W_SUB),
+      criarItem(submenuMira, "Desativado", -0.45, true, W_SUB),
+    ];
+
+    const subItensStreet = [
+      criarItem(submenuStreet, "Jogar Com Timer", 0, false, W_SUB),
+      criarItem(submenuStreet, "Jogar Sem Timer", -0.45, false, W_SUB),
+    ];
+
+    const subItensVolta = [
+      criarItem(submenuVolta, "Jogar Com Timer", 0, false, W_SUB),
+      criarItem(submenuVolta, "Jogar Sem Timer", -0.45, false, W_SUB),
     ];
 
     const marcarSelecionado = (itens, valorAtual, listaValores) => {
       itens.forEach((ref, idx) => {
-        if (ref.fundo)
-          ref.fundo.setAttribute(
-            "opacity",
-            listaValores[idx] === valorAtual ? "1" : "0"
-          );
-        if (ref.fundo && listaValores[idx] === valorAtual)
-          ref.fundo.setAttribute("color", "green");
+        if (ref.fundo) {
+          const selecionado = listaValores[idx] === valorAtual;
+          ref.fundo.setAttribute("opacity", selecionado ? "1" : "0");
+          if (selecionado) ref.fundo.setAttribute("color", "green");
+        }
       });
     };
 
     marcarSelecionado(subItensTimer, window.tempoCronometro, valoresTimer);
     marcarSelecionado(subItensCesta, window.cestaSelecionada, valoresCesta);
+    marcarSelecionado(subItensMira, window.configMira, valoresMira);
 
     const fecharSubmenusInterno = () => {
       submenuTimer.setAttribute("scale", "0 0 0");
       submenuTimer.setAttribute("visible", false);
       submenuCesta.setAttribute("scale", "0 0 0");
       submenuCesta.setAttribute("visible", false);
+      submenuMira.setAttribute("scale", "0 0 0");
+      submenuMira.setAttribute("visible", false);
+      submenuStreet.setAttribute("scale", "0 0 0");
+      submenuStreet.setAttribute("visible", false);
+      submenuVolta.setAttribute("scale", "0 0 0");
+      submenuVolta.setAttribute("visible", false);
       linhaConexao.setAttribute("visible", false);
+
       if (this.itemSelecionado) {
         this.itemSelecionado.bgItem.setAttribute("color", "#222222");
         this.itemSelecionado.bgItem.setAttribute(
@@ -329,137 +419,109 @@ AFRAME.registerComponent("menu-placar", {
       });
     });
 
+    subItensMira.forEach((ref, idx) => {
+      ref.bgItem.addEventListener("click", () => {
+        window.configMira = valoresMira[idx];
+        marcarSelecionado(subItensMira, valoresMira[idx], valoresMira);
+        fecharSubmenusInterno();
+      });
+    });
+
+    subItensStreet.forEach((ref, idx) => {
+      ref.bgItem.addEventListener("click", () => {
+        const usarTimer = idx === 0;
+        if (window.Minigames) window.Minigames.iniciar("street21", usarTimer);
+         fecharSubmenusInterno();
+      });
+    });
+
+    subItensVolta.forEach((ref, idx) => {
+      ref.bgItem.addEventListener("click", () => {
+        const usarTimer = idx === 0;
+        if (window.Minigames)
+          window.Minigames.iniciar("voltaAoMundo", usarTimer);
+         fecharSubmenusInterno();
+      });
+    });
+
     this.itemSelecionado = null;
 
-    // === LÓGICA DE CLIQUE MENU PRINCIPAL (MODIFICADA) ===
+    // === LÓGICA DE CLIQUE MENU PRINCIPAL ===
     principalItens.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
-        // Se clicar em qualquer item que não abre submenu (0 ou 1), fecha os submenus
-        // Nota: O Item 2 (Mira) não abre submenu, então também deve fechar
-        if (idx !== 0 && idx !== 1) {
-          fecharSubmenusInterno();
-        }
+        fecharSubmenusInterno();
 
         const yLinhaAbsoluta =
           ref.itemGroup.getAttribute("position").y + menuPrincipalY;
 
-        // INDEX 0: Cesta
+        // Posição X da Linha (5.25)
+        const xLinha = 5.25;
+
+        const abrirSubmenu = (submenuEl) => {
+          this.itemSelecionado = ref;
+          ref.bgItem.setAttribute("color", "#666666");
+          ref.bgItem.removeAttribute("animation__color_in");
+          ref.bgItem.removeAttribute("animation__color_out");
+
+          submenuEl.setAttribute("visible", true);
+          submenuEl.setAttribute("scale", "1 1 1");
+          linhaConexao.setAttribute(
+            "position",
+            `${xLinha} ${yLinhaAbsoluta} ${profundidade - 0.001}`
+          );
+          linhaConexao.setAttribute("visible", true);
+        };
+
         if (idx === 0) {
-          fecharSubmenusInterno(); // Garante reset visual
-          this.itemSelecionado = ref;
-          ref.bgItem.removeAttribute("animation__color_in");
-          ref.bgItem.removeAttribute("animation__color_out");
-          ref.bgItem.setAttribute("color", "#666666");
-
-          submenuCesta.setAttribute("visible", true);
-          submenuCesta.setAttribute("scale", "1 1 1");
-          linhaConexao.setAttribute(
-            "position",
-            `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
-          );
-          linhaConexao.setAttribute("visible", true);
-
-          // INDEX 1: Timer
+          abrirSubmenu(submenuCesta);
         } else if (idx === 1) {
-          fecharSubmenusInterno();
-          this.itemSelecionado = ref;
-          ref.bgItem.removeAttribute("animation__color_in");
-          ref.bgItem.removeAttribute("animation__color_out");
-          ref.bgItem.setAttribute("color", "#666666");
-
-          submenuTimer.setAttribute("visible", true);
-          submenuTimer.setAttribute("scale", "1 1 1");
-          linhaConexao.setAttribute(
-            "position",
-            `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
-          );
-          linhaConexao.setAttribute("visible", true);
-
-          // INDEX 2: Mira (Toggle) [NOVO]
+          abrirSubmenu(submenuTimer);
         } else if (idx === 2) {
-          window.configMira = !window.configMira;
-          const novoTexto = window.configMira
-            ? "Mira: ATIVADA"
-            : "Mira: DESATIVADA";
-          ref.itemGroup
-            .querySelector("a-text")
-            .setAttribute("value", novoTexto);
-
-          // Feedback visual de clique
-          ref.bgItem.setAttribute("color", "#444444");
-          setTimeout(() => ref.bgItem.setAttribute("color", "#222222"), 150);
-
-          // INDEX 3: Street 21 (Minigame)
+          abrirSubmenu(submenuMira);
         } else if (idx === 3) {
-          this.fecharMenuTotal();
-          if (window.Minigames) window.Minigames.iniciar("street21", true);
-
-          // INDEX 4: Volta ao Mundo (Minigame)
+          abrirSubmenu(submenuStreet);
         } else if (idx === 4) {
-          this.fecharMenuTotal();
-          if (window.Minigames) window.Minigames.iniciar("voltaAoMundo", true);
-
-          // INDEX 5: On Fire (Minigame)
+          abrirSubmenu(submenuVolta);
         } else if (idx === 5) {
           console.log("On Fire em breve...");
         }
       });
     });
 
-    // BIND METHODS
     this.toggleMenu = this.toggleMenu.bind(this);
     this.fecharMenuTotal = this.fecharMenuTotal.bind(this);
-
     window.addEventListener("keydown", this.toggleMenu);
   },
 
-  // === LOOP DE VERIFICAÇÃO (RODA SEMPRE) ===
   tick: function () {
-    // Calcula a distância atual
     const dist = this.calcularDistancia();
     if (dist === null) return;
-
-    // Estado atual de visibilidade
     const estaVisivel = this.container.getAttribute("visible");
 
-    // LÓGICA DE ENTRADA/SAÍDA
     if (dist <= 4.5) {
-      // Entrou na área: Mostra o prompt (Linhas, Texto, F)
-      if (!estaVisivel) {
-        this.container.setAttribute("visible", true);
-      }
+      if (!estaVisivel) this.container.setAttribute("visible", true);
     } else {
-      // Saiu da área: Esconde tudo
       if (estaVisivel) {
         this.container.setAttribute("visible", false);
-        // Se o menu estava aberto, fecha e reseta ele
-        if (this.menuAberto) {
-          this.fecharMenuTotal();
-        }
+        if (this.menuAberto) this.fecharMenuTotal();
       }
     }
   },
 
-  // === HELPER: CALCULAR DISTÂNCIA ===
   calcularDistancia: function () {
     const camera = document.getElementById("camera-jogador");
     const zonaInteracao = document.getElementById("zona-interacao-player");
-
     if (!camera || !zonaInteracao) return null;
-
     const playerPos = new THREE.Vector3();
     const zonaPos = new THREE.Vector3();
-
     camera.object3D.getWorldPosition(playerPos);
     zonaInteracao.object3D.getWorldPosition(zonaPos);
-
     return Math.sqrt(
       Math.pow(playerPos.x - zonaPos.x, 2) +
         Math.pow(playerPos.z - zonaPos.z, 2)
     );
   },
 
-  // === HELPER: FECHAR TUDO (RESETA MENU) ===
   fecharMenuTotal: function () {
     this.menuAberto = false;
     this.menuPrincipal.setAttribute("scale", "0 0 0");
@@ -467,6 +529,12 @@ AFRAME.registerComponent("menu-placar", {
     this.submenuTimer.setAttribute("visible", false);
     this.submenuCesta.setAttribute("scale", "0 0 0");
     this.submenuCesta.setAttribute("visible", false);
+    this.submenuMira.setAttribute("scale", "0 0 0");
+    this.submenuMira.setAttribute("visible", false);
+    this.submenuStreet.setAttribute("scale", "0 0 0");
+    this.submenuStreet.setAttribute("visible", false);
+    this.submenuVolta.setAttribute("scale", "0 0 0");
+    this.submenuVolta.setAttribute("visible", false);
     this.linhaConexao.setAttribute("visible", false);
 
     if (this.itemSelecionado) {
@@ -483,22 +551,17 @@ AFRAME.registerComponent("menu-placar", {
     }
   },
 
-  // === INTERAÇÃO TECLA F ===
   toggleMenu: function (e) {
     if (e.code === "KeyF") {
       const dist = this.calcularDistancia();
-
-      // Se tiver longe, ou se o container estiver invisível, ignora
       if (
         dist === null ||
         dist > 4.5 ||
         !this.container.getAttribute("visible")
-      ) {
+      )
         return;
-      }
 
       this.menuAberto = !this.menuAberto;
-
       if (this.menuAberto) {
         this.menuPrincipal.setAttribute("scale", "1 1 1");
       } else {
