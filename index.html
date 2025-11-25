@@ -130,7 +130,7 @@
           <a-entity
             id="cursor-mira"
             cursor="fuse: false"
-            raycaster="objects: .interativo; far: 4"
+            raycaster="objects: .interativo; far: 8"
             position="0 0 -1"
             geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
             material="color: white; shader: flat; opacity: 0.9"
@@ -1371,6 +1371,10 @@
         trajetoria-previsao="pontos: 30; intervalo: 0.05; cor: red"
         config-fisica="restituicao: 0.95; atrito: 0.5"
       >
+        <a-sphere
+          radius="160"
+          material="opacity: 0; transparent: true; side: double"
+        ></a-sphere>
       </a-gltf-model>
       <!-- FIM BOLA DE BASQUETE -->
 
@@ -1775,7 +1779,7 @@
         <div class="control-label">Pegar Bola</div>
       </div>
 
-      <div class="control-row">
+      <div id="row-reset-placar" class="control-row">
         <div class="key-badge">R</div>
         <div class="control-label">Resetar Placar</div>
       </div>
@@ -1843,7 +1847,7 @@
           </div>
           <div class="control-label">Soltar</div>
         </div>
-        <div class="control-row">
+        <div id="row-btn-mira" class="control-row">
           <div class="key-badge">M</div>
           <div id="txt-mira" class="control-label">Desativar Mira</div>
         </div>

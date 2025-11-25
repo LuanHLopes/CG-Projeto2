@@ -78,7 +78,7 @@ AFRAME.registerComponent("sensor", {
         console.warn(
           `🚫 Cesta bloqueada! Você acertou na ${idAtual}, mas o alvo é ${idAlvo}.`
         );
-        return; 
+        return;
       }
     }
     const bolaEl = document.getElementById("bola");
@@ -184,7 +184,16 @@ AFRAME.registerComponent("controle-placar", {
     resetLed("#grupo-guest");
   },
   onKeyDown: function (e) {
-    if (e.code === "KeyR") this.resetarLogica();
+    if (e.code === "KeyR") {
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO
+      ) {
+        console.warn("🚫 Reset bloqueado durante o minigame!");
+        return;
+      }
+      this.resetarLogica();
+    }
   },
   remove: function () {
     window.removeEventListener("keydown", this.onKeyDown);

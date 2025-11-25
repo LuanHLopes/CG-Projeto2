@@ -25,7 +25,7 @@ AFRAME.registerShader("gradient-beam", {
 });
 
 /* ====================================================================
-   MINIGAMES.JS - Street 21 + Volta ao Mundo (Ajuste Final: Zona 6m + Altura 2m)
+   MINIGAMES.JS - Versão Final (Timer Opcional + Sem Blink no modo Livre)
 ==================================================================== */
 
 const Desafios = {
@@ -49,7 +49,7 @@ const Desafios = {
         window.cestaSelecionada === 1 ? "HOME (Azul)" : "GUEST (Amarela)";
       const modoTempo = this.usandoTimer
         ? `${window.tempoCronometro}s`
-        : "SEM LIMITE";
+        : "SEM LIMITE (TREINO)";
 
       console.log(
         `🏀 [STREET 21] INICIADO! Meta: ${this.META_PONTOS} | Tempo: ${modoTempo}`
@@ -61,6 +61,10 @@ const Desafios = {
           this.finalizarComEfeito(false, "⏰ TEMPO ESGOTADO!");
         };
         window.addEventListener("cronometro-zerado", this._listenerTimer);
+      } else {
+        // Garante cronometro parado no modo treino
+        if (typeof window.pararCronometro === "function")
+          window.pararCronometro();
       }
 
       this._listenerPontos = (e) => {
@@ -84,12 +88,20 @@ const Desafios = {
     },
     finalizarComEfeito: function (venceu, mensagem) {
       console.log(mensagem);
+
+      // Para o cronômetro se estiver rodando
       if (this.usandoTimer && typeof window.pararCronometro === "function")
         window.pararCronometro();
+
       this.limparListeners();
-      const timerEl = document.getElementById("grupo-tempo");
-      if (timerEl && timerEl.components["cronometro-tempo"])
-        timerEl.components["cronometro-tempo"].blinkHud();
+
+      // [MODIFICAÇÃO] Só pisca o HUD se o timer estava sendo usado
+      if (this.usandoTimer) {
+        const timerEl = document.getElementById("grupo-tempo");
+        if (timerEl && timerEl.components["cronometro-tempo"])
+          timerEl.components["cronometro-tempo"].blinkHud();
+      }
+
       this._timerDelay = setTimeout(() => {
         Minigames.pararTotal();
       }, 3500);
@@ -124,7 +136,7 @@ const Desafios = {
     id: "voltaAoMundo",
     enumMode: window.GAME_MODE.VOLTA_AO_MUNDO,
     nome: "Volta ao Mundo",
-    descricao: "Acerte 5 cestas espalhadas (min 10m de distância entre elas).",
+    descricao: "Acerte 5 cestas de locais diferentes.",
 
     usandoTimer: true,
     _listenerPontos: null,
@@ -134,35 +146,56 @@ const Desafios = {
     cestasFeitas: 0,
     META_CESTAS: 5,
     historicoPosicoes: [],
+    posicaoAtual: null,
 
     iniciar: function (usarTimer = true) {
       this.usandoTimer = usarTimer;
       this.cestasFeitas = 0;
       this.historicoPosicoes = [];
+      this.posicaoAtual = null;
 
       const idAlvo = window.cestaSelecionada;
       const nomeCesta = idAlvo === 1 ? "HOME" : "GUEST";
 
-      console.log(`🌍 [VOLTA AO MUNDO] Alvo: ${nomeCesta}`);
-      console.log("📍 Regra: 10m de distância + Zona Morta Oposta 6m.");
+      const textoTempo = this.usandoTimer
+        ? `COM TIMER (${window.tempoCronometro}s)`
+        : "SEM TIMER (LIVRE)";
+
+      console.log(
+        `🌍 [VOLTA AO MUNDO] Alvo: ${nomeCesta} | Modo: ${textoTempo}`
+      );
+      console.log("📍 Regra: Arremesse de DENTRO do feixe de luz.");
 
       this.gerarNovaPosicao();
 
       if (this.usandoTimer && typeof window.iniciarCronometro === "function") {
         window.iniciarCronometro();
         this._listenerTimer = () => {
-          this.finalizarComEfeito(false, "⏰ TEMPO ESGOTADO!");
+          this.finalizarComEfeito(
+            false,
+            "⏰ TEMPO ESGOTADO! Tente ser mais rápido."
+          );
         };
         window.addEventListener("cronometro-zerado", this._listenerTimer);
+      } else {
+        if (typeof window.pararCronometro === "function")
+          window.pararCronometro();
       }
 
       this._listenerPontos = (e) => {
         const idEvento = parseInt(e.detail.idCesta);
         if (idEvento !== parseInt(window.cestaSelecionada)) return;
 
+        if (!this.validarPosicaoArremesso()) {
+          console.warn("🚫 PONTO INVALIDADO: Fora da zona!");
+          Minigames._piscarMarcadorErro();
+          this.reverterPontuacaoVisual(e.detail.pontosFeitos, e.detail.time);
+          return;
+        }
+
         this.cestasFeitas++;
         console.log(
-          `✅ Cesta ${this.cestasFeitas}/${this.META_CESTAS} convertida!`
+          `✅ Cesta ${this.cestasFeitas}/${this.META_CESTAS} VÁLIDA!`
         );
 
         if (this.cestasFeitas >= this.META_CESTAS) {
@@ -177,23 +210,48 @@ const Desafios = {
       window.addEventListener("pontuacao-registrada", this._listenerPontos);
     },
 
+    validarPosicaoArremesso: function () {
+      if (!this.posicaoAtual) return true;
+      const bola = document.getElementById("bola");
+      if (!bola || !bola.object3D.userData.origemArremesso) return false;
+      const origem = bola.object3D.userData.origemArremesso;
+      const alvo = this.posicaoAtual;
+      const dist = Math.sqrt(
+        Math.pow(origem.x - alvo.x, 2) + Math.pow(origem.z - alvo.z, 2)
+      );
+      const TOLERANCIA = 2.0;
+      return dist <= TOLERANCIA;
+    },
+
+    reverterPontuacaoVisual: function (pontos, timeStr) {
+      const idHud = timeStr === "HOME" ? "score-top-home" : "score-top-guest";
+      const hudElement = document.getElementById(idHud);
+      if (hudElement) {
+        let valorAtual = parseInt(hudElement.innerText);
+        let valorCorrigido = Math.max(0, valorAtual - pontos);
+        hudElement.innerText =
+          valorCorrigido < 10 ? "0" + valorCorrigido : valorCorrigido;
+        const idGrupo3D = timeStr === "HOME" ? "#grupo-home" : "#grupo-guest";
+        const sensor = document.querySelector("[sensor]");
+        if (
+          sensor &&
+          sensor.components.sensor &&
+          sensor.components.sensor.atualizarLed
+        ) {
+          sensor.components.sensor.atualizarLed(idGrupo3D, valorCorrigido);
+        }
+      }
+    },
+
     gerarNovaPosicao: function () {
       const idCesta = parseInt(window.cestaSelecionada);
       const zPosteAlvo = idCesta === 1 ? -7.1625 : 7.1625;
-
       const limiteX = 7.2;
-
-      // [MODIFICADO] Zona Morta retornou para 6m
       let minZ, maxZ;
-
       if (idCesta === 1) {
-        // Alvo: HOME (Negativo)
-        // Evita o fundo extremo do Guest (+13.5 - 6m = +7.5)
         minZ = -13.5;
         maxZ = 7.5;
       } else {
-        // Alvo: GUEST (Positivo)
-        // Evita o fundo extremo do Home (-13.5 + 6m = -7.5)
         minZ = -7.5;
         maxZ = 13.5;
       }
@@ -202,16 +260,12 @@ const Desafios = {
       let valida = false;
       let tentativas = 0;
 
-      // console.log(`🎲 Gerando Posição (Z entre ${minZ} e ${maxZ})...`);
-
       do {
         randX = Math.random() * (limiteX * 2) - limiteX;
         randZ = Math.random() * (maxZ - minZ) + minZ;
-
         const distanciaAteAlvo = Math.sqrt(
           Math.pow(randX - 0, 2) + Math.pow(randZ - zPosteAlvo, 2)
         );
-
         let longeDoHistorico = true;
         for (let pos of this.historicoPosicoes) {
           const distHist = Math.sqrt(
@@ -222,38 +276,42 @@ const Desafios = {
             break;
           }
         }
-
-        if (distanciaAteAlvo > 4.0 && longeDoHistorico) {
-          valida = true;
-        }
+        if (distanciaAteAlvo > 4.0 && longeDoHistorico) valida = true;
         tentativas++;
       } while (!valida && tentativas < 500);
 
       if (!valida) {
-        console.warn("⚠️ Fallback: Gerando posição de emergência.");
         randX = Math.random() * (limiteX * 2) - limiteX;
         randZ = Math.random() * (maxZ - minZ) + minZ;
       }
 
-      this.historicoPosicoes.push({ x: randX, z: randZ });
-
-      // Mantendo Y = 0.12 (altura do anel no chão)
+      this.posicaoAtual = { x: randX, z: randZ };
+      this.historicoPosicoes.push(this.posicaoAtual);
       Minigames._moverMarcador(randX, 0.12, randZ);
     },
 
     finalizarComEfeito: function (venceu, mensagem) {
       console.log(mensagem);
+
       if (this.usandoTimer && typeof window.pararCronometro === "function")
         window.pararCronometro();
+
       this.limparListeners();
-      const timerEl = document.getElementById("grupo-tempo");
-      if (timerEl && timerEl.components["cronometro-tempo"])
-        timerEl.components["cronometro-tempo"].blinkHud();
+
+      // [MODIFICAÇÃO] Só pisca HUD se timer estava sendo usado
+      if (this.usandoTimer) {
+        const timerEl = document.getElementById("grupo-tempo");
+        if (timerEl && timerEl.components["cronometro-tempo"])
+          timerEl.components["cronometro-tempo"].blinkHud();
+      }
+
       Minigames._esconderMarcador();
+
       this._timerDelay = setTimeout(() => {
         Minigames.pararTotal();
       }, 3500);
     },
+
     limparListeners: function () {
       if (this._listenerPontos) {
         window.removeEventListener(
@@ -299,32 +357,27 @@ const Minigames = {
   _listenerTeclas: null,
   _configUsarTimer: true,
 
-  // === MARCADOR VISUAL (ANEL + FEIXE DE LUZ) ===
   _getMarcador: function () {
     let marcador = document.getElementById("marcador-minigame");
     if (!marcador) {
       const scene = document.querySelector("a-scene");
       marcador = document.createElement("a-entity");
       marcador.id = "marcador-minigame";
-
-      // 1. Anel no chão
       const ring = document.createElement("a-ring");
+      ring.id = "marcador-anel";
       ring.setAttribute("color", "#00FF00");
       ring.setAttribute("radius-inner", "1.9");
       ring.setAttribute("radius-outer", "2.0");
       ring.setAttribute("rotation", "-90 0 0");
       ring.setAttribute("shader", "flat");
       ring.setAttribute("opacity", "0.8");
-
-      // 2. [ATUALIZADO] Feixe Vertical (Altura 2.0m)
       const beam = document.createElement("a-cylinder");
-      // Altura 2.0m. Posição Y deve ser metade da altura (1.0)
+      beam.id = "marcador-feixe";
       beam.setAttribute("height", "2.0");
       beam.setAttribute("position", "0 1.0 0");
       beam.setAttribute("radius", "1.95");
       beam.setAttribute("open-ended", "true");
       beam.setAttribute("side", "double");
-
       beam.setAttribute("material", {
         shader: "gradient-beam",
         colorBottom: "#00FF00",
@@ -333,10 +386,8 @@ const Minigames = {
         blending: "additive",
         depthWrite: false,
       });
-
       marcador.appendChild(ring);
       marcador.appendChild(beam);
-
       scene.appendChild(marcador);
     }
     return marcador;
@@ -345,18 +396,34 @@ const Minigames = {
   _moverMarcador: function (x, y, z) {
     const m = this._getMarcador();
     m.removeAttribute("animation");
-
+    const ring = m.querySelector("#marcador-anel");
+    const beam = m.querySelector("#marcador-feixe");
+    if (ring) ring.setAttribute("color", "#00FF00");
+    if (beam) beam.setAttribute("material", "colorBottom", "#00FF00");
     m.setAttribute("scale", "0.1 0.1 0.1");
-    // Posiciona (Y = 0.12 para o anel no chão, o feixe sobe a partir daí)
     m.setAttribute("position", `${x} ${y} ${z}`);
     m.setAttribute("visible", true);
-
     setTimeout(() => {
       m.setAttribute(
         "animation",
         "property: scale; to: 1 1 1; dur: 500; easing: easeOutElastic"
       );
     }, 20);
+  },
+
+  _piscarMarcadorErro: function () {
+    const m = this._getMarcador();
+    if (!m) return;
+    const ring = m.querySelector("#marcador-anel");
+    const beam = m.querySelector("#marcador-feixe");
+    const corErro = "#FF0000";
+    const corNormal = "#00FF00";
+    if (ring) ring.setAttribute("color", corErro);
+    if (beam) beam.setAttribute("material", "colorBottom", corErro);
+    setTimeout(() => {
+      if (ring) ring.setAttribute("color", corNormal);
+      if (beam) beam.setAttribute("material", "colorBottom", corNormal);
+    }, 500);
   },
 
   _esconderMarcador: function () {
@@ -367,6 +434,17 @@ const Minigames = {
     window.estadoJogo.status = novoStatus;
     if (novoModo) window.estadoJogo.modo = novoModo;
   },
+
+  _toggleResetUI: function (mostrar) {
+    const el = document.getElementById("row-reset-placar");
+    if (el) el.style.display = mostrar ? "flex" : "none";
+  },
+
+  _toggleMiraUI: function (mostrar) {
+    const el = document.getElementById("row-btn-mira");
+    if (el) el.style.display = mostrar ? "flex" : "none";
+  },
+
   _setarTeclaT: function (permitido) {
     const bola = document.getElementById("bola");
     if (bola && bola.components["mecanica-arremesso"])
@@ -394,8 +472,10 @@ const Minigames = {
       this._atualizarEstado(window.GAME_STATUS.ESPERA, desafio.enumMode);
       this._configurarControles();
       console.log(`⚠️ PREPARADO: ${desafio.nome}`);
-      console.log(`⏱️ MODO TIMER: ${usarTimer ? "ATIVADO" : "DESATIVADO"}`);
-      console.log(`👉 'I' para INICIAR (Bloqueia T) | 'O' para CANCELAR`);
+      console.log(
+        `⏱️ MODO TIMER: ${usarTimer ? "ATIVADO" : "DESATIVADO (LIVRE)"}`
+      );
+      console.log(`👉 'I' para INICIAR | 'O' para CANCELAR`);
       return `Aguardando start...`;
     } else {
       console.error(`❌ Desafio '${idDesafio}' não encontrado.`);
@@ -410,7 +490,28 @@ const Minigames = {
         e.code === "KeyI" &&
         window.estadoJogo.status === window.GAME_STATUS.ESPERA
       ) {
-        this._setarTeclaT(false);
+        this._setarTeclaT(true);
+        this._toggleResetUI(false);
+
+        if (window.configMira === false) {
+          console.log("🚫 Minigame Hardcore: Mira Desativada!");
+          this._toggleMiraUI(false);
+          const bola = document.getElementById("bola");
+          if (bola) {
+            if (bola.components["mecanica-arremesso"]) {
+              bola.components["mecanica-arremesso"].mostrarTrajetoria = false;
+            }
+            if (bola.components["trajetoria-previsao"]) {
+              bola.components["trajetoria-previsao"].mostrando = false;
+              bola.components["trajetoria-previsao"].pontosEl.forEach((p) =>
+                p.setAttribute("visible", "false")
+              );
+            }
+            const txtMira = document.getElementById("txt-mira");
+            if (txtMira) txtMira.innerText = "BLOQUEADA";
+          }
+        }
+
         this._limparAmbiente();
         this._atualizarEstado(window.GAME_STATUS.ATIVO);
         this.desafioSelecionado.iniciar(this._configUsarTimer);
@@ -430,6 +531,16 @@ const Minigames = {
         this._listenerTeclas = null;
       }
       this._setarTeclaT(true);
+      this._toggleResetUI(true);
+      this._toggleMiraUI(true);
+      const txtMira = document.getElementById("txt-mira");
+      if (txtMira) txtMira.innerText = "Desativar Mira";
+
+      const bola = document.getElementById("bola");
+      if (bola && bola.components["mecanica-arremesso"]) {
+        bola.components["mecanica-arremesso"].mostrarTrajetoria = true;
+      }
+
       this._atualizarEstado(
         window.GAME_STATUS.DESATIVADO,
         window.GAME_MODE.LIVRE

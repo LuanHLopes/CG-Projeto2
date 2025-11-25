@@ -47,6 +47,15 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
   alternarMira: function (e) {
     if (e.code === "KeyM") {
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO &&
+        window.configMira === false
+      ) {
+        console.log("🚫 Mira bloqueada pelas regras do jogo.");
+        return;
+      }
+
       this.mostrarTrajetoria = !this.mostrarTrajetoria;
 
       if (this.txtMira) {
@@ -60,8 +69,31 @@ AFRAME.registerComponent("mecanica-arremesso", {
   invocarBola: function (e) {
     if (e.code === "KeyT") {
       if (!this.podeUsarT) {
-        console.log("Tecla T bloqueada durante o minigame.");
+        console.log("Tecla T desabilitada pelo sistema.");
         return;
+      }
+
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO
+      ) {
+        const posBola = new THREE.Vector3();
+        const posJogador = new THREE.Vector3();
+
+        this.el.object3D.getWorldPosition(posBola);
+        this.camera.object3D.getWorldPosition(posJogador);
+
+        const distancia = posJogador.distanceTo(posBola);
+        const DISTANCIA_MAXIMA = 8.0;
+
+        if (distancia > DISTANCIA_MAXIMA) {
+          console.log(
+            `🚫 Você está muito longe! Chegue mais perto para pegar a bola. (Distância: ${distancia.toFixed(
+              1
+            )}m)`
+          );
+          return;
+        }
       }
 
       if (this.segurando) return;
@@ -131,6 +163,24 @@ AFRAME.registerComponent("mecanica-arremesso", {
         this.el.body.quaternion.copy(rot);
         this.el.body.velocity.set(0, 0, 0);
         this.el.body.angularVelocity.set(0, 0, 0);
+      }
+    }
+
+    if (this.el.object3D.position.y < -10) {
+      console.log("♻️ Bola caiu no infinito. Resetando posição...");
+
+      const resetPos = { x: 0, y: 0.5, z: 0 };
+
+      this.el.object3D.position.set(resetPos.x, resetPos.y, resetPos.z);
+
+      if (this.el.body) {
+        this.el.body.position.set(resetPos.x, resetPos.y, resetPos.z);
+        this.el.body.velocity.set(0, 0, 0);
+        this.el.body.angularVelocity.set(0, 0, 0);
+      }
+
+      if (this.segurando) {
+        this.liberarBola();
       }
     }
   },

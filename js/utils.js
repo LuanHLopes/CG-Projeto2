@@ -1,24 +1,26 @@
+window.configMira = true;
+
 window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
 
-window.cestaSelecionada = 1; 
+window.cestaSelecionada = 1;
 window.tempoCronometro = 90;
 
 window.GAME_MODE = Object.freeze({
-    LIVRE: "LIVRE",
-    STREET_21: "STREET_21",
-    VOLTA_AO_MUNDO: "VOLTA_AO_MUNDO",
-    ON_FIRE: "ON_FIRE"
+  LIVRE: "LIVRE",
+  STREET_21: "STREET_21",
+  VOLTA_AO_MUNDO: "VOLTA_AO_MUNDO",
+  ON_FIRE: "ON_FIRE",
 });
 
 window.GAME_STATUS = Object.freeze({
-    DESATIVADO: "DESATIVADO",
-    ESPERA: "ESPERA",        
-    ATIVO: "ATIVO"           
+  DESATIVADO: "DESATIVADO",
+  ESPERA: "ESPERA",
+  ATIVO: "ATIVO",
 });
 
 window.estadoJogo = {
-    modo: window.GAME_MODE.LIVRE,
-    status: window.GAME_STATUS.DESATIVADO
+  modo: window.GAME_MODE.LIVRE,
+  status: window.GAME_STATUS.DESATIVADO,
 };
 
 document.addEventListener("fullscreenchange", () => {
@@ -35,7 +37,7 @@ document.addEventListener("fullscreenchange", () => {
 
 window.addEventListener("keydown", (e) => {
   if (e.code === "F11") {
-    e.preventDefault(); 
+    e.preventDefault();
     if (!document.fullscreenElement) {
       document.body.requestFullscreen().catch((err) => {
         console.warn("Erro ao tentar tela cheia:", err);
@@ -57,8 +59,8 @@ AFRAME.registerComponent("controle-ui", {
     this.hudTopo = document.getElementById("hud-topo-container");
     this.hudLateral = document.getElementById("hud-controls");
     this.txtPlacar = document.getElementById("txt-placar");
-    this.hintMenu = document.getElementById("hint-menu"); 
-    
+    this.hintMenu = document.getElementById("hint-menu");
+
     this.placarVisivel = true;
     this.menuVisivel = true;
 
@@ -69,14 +71,16 @@ AFRAME.registerComponent("controle-ui", {
   onKeyDown: function (e) {
     if (e.code === "KeyP") {
       this.placarVisivel = !this.placarVisivel;
-      
+
       if (this.hudTopo) {
         if (this.placarVisivel) this.hudTopo.classList.remove("oculto");
         else this.hudTopo.classList.add("oculto");
       }
 
       if (this.txtPlacar) {
-          this.txtPlacar.innerText = this.placarVisivel ? "Ocultar Placar" : "Mostrar Placar";
+        this.txtPlacar.innerText = this.placarVisivel
+          ? "Ocultar Placar"
+          : "Mostrar Placar";
       }
     }
 
@@ -85,23 +89,23 @@ AFRAME.registerComponent("controle-ui", {
 
       if (this.hudLateral) {
         if (this.menuVisivel) {
-            this.hudLateral.classList.remove("oculto-lateral");
+          this.hudLateral.classList.remove("oculto-lateral");
         } else {
-            this.hudLateral.classList.add("oculto-lateral");
+          this.hudLateral.classList.add("oculto-lateral");
         }
       }
 
       if (this.hintMenu) {
-          if (this.menuVisivel) {
-              this.hintMenu.classList.add("oculto");
-          } else {
-              this.hintMenu.classList.remove("oculto");
-          }
+        if (this.menuVisivel) {
+          this.hintMenu.classList.add("oculto");
+        } else {
+          this.hintMenu.classList.remove("oculto");
+        }
       }
     }
   },
-  
-  remove: function() {
-      window.removeEventListener("keydown", this.onKeyDown);
-  }
+
+  remove: function () {
+    window.removeEventListener("keydown", this.onKeyDown);
+  },
 });

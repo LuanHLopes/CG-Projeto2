@@ -46,13 +46,15 @@ AFRAME.registerComponent("menu-placar", {
 
     window.tempoCronometro = window.tempoCronometro || 90;
     window.cestaSelecionada = window.cestaSelecionada || 1;
+    // Garante que a configMira existe
+    if (typeof window.configMira === "undefined") window.configMira = true;
 
     // === 2. ESTRUTURA VISUAL ===
     const container = document.createElement("a-entity");
     container.setAttribute("position", "4.35 10.0 -8.3");
     container.setAttribute("rotation", "0 -10 0");
 
-    // [NOVO] Começa invisível para só aparecer quando entrar na área
+    // Começa invisível para só aparecer quando entrar na área
     container.setAttribute("visible", false);
 
     this.el.appendChild(container);
@@ -194,12 +196,29 @@ AFRAME.registerComponent("menu-placar", {
       return { bgItem, itemGroup, fundo };
     };
 
+    // --- LISTA DE ITENS (ATUALIZADA COM MIRA) ---
     const principalItens = [];
+
+    // Index 0: Cesta
     principalItens.push(criarItem(menuPrincipal, "Selecionar Cesta", 1.225));
+
+    // Index 1: Timer
     principalItens.push(criarItem(menuPrincipal, "Definir Timer", 0.775));
-    principalItens.push(criarItem(menuPrincipal, "Desafio Street 21", 0.325));
-    principalItens.push(criarItem(menuPrincipal, "Desafio Volta ao Mundo", -0.125));
-    principalItens.push(criarItem(menuPrincipal, "Desafio On Fire", -0.575));
+
+    // Index 2: Mira [NOVO]
+    const textoMira = window.configMira ? "Mira: ATIVADA" : "Mira: DESATIVADA";
+    principalItens.push(criarItem(menuPrincipal, textoMira, 0.325));
+
+    // Index 3: Street 21
+    principalItens.push(criarItem(menuPrincipal, "Desafio Street 21", -0.125));
+
+    // Index 4: Volta ao Mundo
+    principalItens.push(
+      criarItem(menuPrincipal, "Desafio Volta ao Mundo", -0.575)
+    );
+
+    // Index 5: On Fire
+    principalItens.push(criarItem(menuPrincipal, "Desafio On Fire", -1.025));
 
     // === 4. SUBMENUS ===
     const submenuTimer = document.createElement("a-entity");
@@ -245,7 +264,7 @@ AFRAME.registerComponent("menu-placar", {
     container.appendChild(linhaConexao);
     this.linhaConexao = linhaConexao;
 
-    // === LÓGICA DE ITENS ===
+    // === LÓGICA DE ITENS DOS SUBMENUS ===
     const valoresTimer = [30, 60, 90];
     const subItensTimer = [
       criarItem(submenuTimer, "30s", 0, true),
@@ -312,19 +331,26 @@ AFRAME.registerComponent("menu-placar", {
 
     this.itemSelecionado = null;
 
+    // === LÓGICA DE CLIQUE MENU PRINCIPAL (MODIFICADA) ===
     principalItens.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
-        fecharSubmenusInterno();
-
-        this.itemSelecionado = ref;
-        ref.bgItem.removeAttribute("animation__color_in");
-        ref.bgItem.removeAttribute("animation__color_out");
-        ref.bgItem.setAttribute("color", "#666666");
+        // Se clicar em qualquer item que não abre submenu (0 ou 1), fecha os submenus
+        // Nota: O Item 2 (Mira) não abre submenu, então também deve fechar
+        if (idx !== 0 && idx !== 1) {
+          fecharSubmenusInterno();
+        }
 
         const yLinhaAbsoluta =
           ref.itemGroup.getAttribute("position").y + menuPrincipalY;
 
+        // INDEX 0: Cesta
         if (idx === 0) {
+          fecharSubmenusInterno(); // Garante reset visual
+          this.itemSelecionado = ref;
+          ref.bgItem.removeAttribute("animation__color_in");
+          ref.bgItem.removeAttribute("animation__color_out");
+          ref.bgItem.setAttribute("color", "#666666");
+
           submenuCesta.setAttribute("visible", true);
           submenuCesta.setAttribute("scale", "1 1 1");
           linhaConexao.setAttribute(
@@ -332,7 +358,15 @@ AFRAME.registerComponent("menu-placar", {
             `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
           );
           linhaConexao.setAttribute("visible", true);
+
+          // INDEX 1: Timer
         } else if (idx === 1) {
+          fecharSubmenusInterno();
+          this.itemSelecionado = ref;
+          ref.bgItem.removeAttribute("animation__color_in");
+          ref.bgItem.removeAttribute("animation__color_out");
+          ref.bgItem.setAttribute("color", "#666666");
+
           submenuTimer.setAttribute("visible", true);
           submenuTimer.setAttribute("scale", "1 1 1");
           linhaConexao.setAttribute(
@@ -340,6 +374,34 @@ AFRAME.registerComponent("menu-placar", {
             `4.95 ${yLinhaAbsoluta} ${profundidade - 0.001}`
           );
           linhaConexao.setAttribute("visible", true);
+
+          // INDEX 2: Mira (Toggle) [NOVO]
+        } else if (idx === 2) {
+          window.configMira = !window.configMira;
+          const novoTexto = window.configMira
+            ? "Mira: ATIVADA"
+            : "Mira: DESATIVADA";
+          ref.itemGroup
+            .querySelector("a-text")
+            .setAttribute("value", novoTexto);
+
+          // Feedback visual de clique
+          ref.bgItem.setAttribute("color", "#444444");
+          setTimeout(() => ref.bgItem.setAttribute("color", "#222222"), 150);
+
+          // INDEX 3: Street 21 (Minigame)
+        } else if (idx === 3) {
+          this.fecharMenuTotal();
+          if (window.Minigames) window.Minigames.iniciar("street21", true);
+
+          // INDEX 4: Volta ao Mundo (Minigame)
+        } else if (idx === 4) {
+          this.fecharMenuTotal();
+          if (window.Minigames) window.Minigames.iniciar("voltaAoMundo", true);
+
+          // INDEX 5: On Fire (Minigame)
+        } else if (idx === 5) {
+          console.log("On Fire em breve...");
         }
       });
     });
