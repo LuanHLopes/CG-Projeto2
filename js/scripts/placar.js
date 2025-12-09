@@ -67,6 +67,18 @@ AFRAME.registerComponent("sensor", {
   },
 
   registrarCesta: function () {
+    if (
+      window.estadoJogo &&
+      window.estadoJogo.status === window.GAME_STATUS.ATIVO
+    ) {
+      const idAtual = parseInt(this.data.id);
+      const idAlvo = parseInt(window.cestaSelecionada);
+
+      if (idAtual !== idAlvo) {
+        window.notificar("CESTA INCORRETA");
+        return;
+      }
+    }
     const bolaEl = document.getElementById("bola");
 
     let origem = { x: 0, z: 0 };
@@ -97,7 +109,6 @@ AFRAME.registerComponent("sensor", {
       if (distanciaDoCentro > raioLimite || Math.abs(pontoArremesso.x) > 7.2) {
         pontos = 3;
       }
-      console.log(`Cesta ${this.data.id} | Pontos: ${pontos}`);
     } else {
       console.warn("Linha de referência não encontrada. Usando 2 pontos.");
     }
@@ -120,8 +131,16 @@ AFRAME.registerComponent("sensor", {
 
     this.atualizarLed(idGrupo3D, novoValor);
 
-    const debugElement = document.getElementById(`txt-score-${this.data.id}`);
-    if (debugElement) debugElement.innerText = novoValor;
+    window.dispatchEvent(
+      new CustomEvent("pontuacao-registrada", {
+        detail: {
+          pontosFeitos: pontos,
+          totalAcumulado: novoValor,
+          idCesta: this.data.id,
+          time: this.data.id === "1" ? "HOME" : "GUEST",
+        },
+      })
+    );
   },
 
   atualizarLed: function (selectorId, valor) {
@@ -130,7 +149,6 @@ AFRAME.registerComponent("sensor", {
       const digitos = grupo.querySelectorAll("[digito-led]");
       const dezena = Math.floor((valor % 100) / 10);
       const unidade = valor % 10;
-
       if (digitos[0] && digitos[0].components["digito-led"])
         digitos[0].components["digito-led"].setNumero(dezena);
       if (digitos[1] && digitos[1].components["digito-led"])
@@ -141,36 +159,43 @@ AFRAME.registerComponent("sensor", {
 
 AFRAME.registerComponent("controle-placar", {
   init: function () {
-    this.resetar = this.resetar.bind(this);
-    window.addEventListener("keydown", this.resetar);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.resetarLogica = this.resetarLogica.bind(this);
+    window.addEventListener("keydown", this.onKeyDown);
+    window.resetarPlacar = this.resetarLogica;
   },
-  resetar: function (e) {
+  resetarLogica: function () {
+    const hudH = document.getElementById("score-top-home");
+    const hudG = document.getElementById("score-top-guest");
+    if (hudH) hudH.innerText = "00";
+    if (hudG) hudG.innerText = "00";
+
+    const resetLed = (sel) => {
+      const g = document.querySelector(sel);
+      if (g)
+        g.querySelectorAll("[digito-led]").forEach((d) => {
+          if (d.components["digito-led"])
+            d.components["digito-led"].setNumero(0);
+        });
+    };
+    resetLed("#grupo-home");
+    resetLed("#grupo-guest");
+  },
+  onKeyDown: function (e) {
     if (e.code === "KeyR") {
-      const hudH = document.getElementById("score-top-home");
-      const hudG = document.getElementById("score-top-guest");
-      if (hudH) hudH.innerText = "00";
-      if (hudG) hudG.innerText = "00";
-
-      const s1 = document.getElementById("txt-score-1");
-      const s2 = document.getElementById("txt-score-2");
-      if (s1) s1.innerText = "0";
-      if (s2) s2.innerText = "0";
-
-      const resetLed = (sel) => {
-        const g = document.querySelector(sel);
-        if (g)
-          g.querySelectorAll("[digito-led]").forEach((d) => {
-            if (d.components["digito-led"])
-              d.components["digito-led"].setNumero(0);
-          });
-      };
-      resetLed("#grupo-home");
-      resetLed("#grupo-guest");
-
-      console.log("Placar Resetado!");
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO
+      ) {
+        window.notificar("REINICIO BLOQUEADO DURANTE JOGO");
+        return;
+      }
+      this.resetarLogica();
     }
   },
   remove: function () {
-    window.removeEventListener("keydown", this.resetar);
+    window.removeEventListener("keydown", this.onKeyDown);
+    if (window.resetarPlacar === this.resetarLogica)
+      window.resetarPlacar = null;
   },
 });

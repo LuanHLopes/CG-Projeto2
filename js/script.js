@@ -8,6 +8,8 @@ import "./scripts/placar-render.js";
 import "./scripts/timer.js";
 import "./scripts/debug-zonas.js";
 import "./scripts/menu-placar.js";
+import "./scripts/minigames.js";
+import "./scripts/debug-limites.js";
 import "./scripts/loader.js";
 
 AFRAME.registerComponent('gerador-quarteirao', {

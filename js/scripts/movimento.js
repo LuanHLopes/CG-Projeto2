@@ -8,6 +8,12 @@ AFRAME.registerComponent("movimento-fps", {
     this.teclas = { W: false, A: false, S: false, D: false, Shift: false };
     this.camera = document.getElementById("camera-jogador");
 
+    // Variáveis auxiliares para não criar lixo na memória (Garbage Collection)
+    this.quat = new THREE.Quaternion();
+    this.euler = new THREE.Euler(0, 0, 0, "YXZ"); // Ordem YXZ isola o Yaw corretamente
+    this.vecFrente = new THREE.Vector3();
+    this.vecLado = new THREE.Vector3();
+
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -35,17 +41,29 @@ AFRAME.registerComponent("movimento-fps", {
 
   tick: function (t, dt) {
     if (!this.camera) return;
+
+    if (window.estadoJogo.status === window.GAME_STATUS.CONTAGEM) return;
+
     if (!this.teclas.W && !this.teclas.A && !this.teclas.S && !this.teclas.D)
       return;
 
-    const direcao = new THREE.Vector3();
-    this.camera.object3D.getWorldDirection(direcao);
-    direcao.multiplyScalar(-1);
-    direcao.y = 0;
-    direcao.normalize();
+    // 1. Pega a rotação do mundo da câmera (Quaternion)
+    this.camera.object3D.getWorldQuaternion(this.quat);
 
-    const lateral = new THREE.Vector3();
-    lateral.crossVectors(this.camera.object3D.up, direcao).normalize();
+    // 2. Converte para Euler ignorando o Pitch (X) e Roll (Z) para o movimento
+    this.euler.setFromQuaternion(this.quat, "YXZ");
+    const yaw = this.euler.y; // Esse é o ângulo horizontal puro
+
+    // 3. Calcula o vetor FRENTE baseado apenas no seno/cosseno do ângulo Y
+    // No Three.js, "Frente" é geralmente -Z
+    this.vecFrente.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+
+    // 4. Calcula o vetor LADO (Cross product com UP ou rotação de 90 graus)
+    // Cross product de (Frente, Up) resulta na Direita
+    this.vecLado
+      .copy(this.vecFrente)
+      .cross(this.camera.object3D.up)
+      .normalize();
 
     const movimento = new THREE.Vector3(0, 0, 0);
     const fatorTempo = dt / 16.6;
@@ -56,10 +74,15 @@ AFRAME.registerComponent("movimento-fps", {
 
     const vel = velocidadeBase * fatorTempo;
 
-    if (this.teclas.W) movimento.add(direcao);
-    if (this.teclas.S) movimento.sub(direcao);
-    if (this.teclas.D) movimento.sub(lateral);
-    if (this.teclas.A) movimento.add(lateral);
+    // Aplica o movimento nos vetores calculados (que agora são estáveis)
+    if (this.teclas.W) movimento.add(this.vecFrente);
+    if (this.teclas.S) movimento.sub(this.vecFrente);
+
+    // Nota: Inverti a lógica aqui para corrigir padrão WASD se necessário,
+    // mas geralmente D é direita (subtrai do cross product dependendo da ordem)
+    // Se D estiver indo para esquerda, inverta o .add e .sub abaixo
+    if (this.teclas.D) movimento.add(this.vecLado);
+    if (this.teclas.A) movimento.sub(this.vecLado);
 
     this.el.object3D.position.x += movimento.x * vel;
     this.el.object3D.position.z += movimento.z * vel;
@@ -85,6 +108,8 @@ AFRAME.registerComponent("controle-pulo", {
   },
 
   pular: function (e) {
+    if (window.estadoJogo.status === window.GAME_STATUS.CONTAGEM) return;
+
     if (e.code === "Space" && this.noChao) {
       this.velocidadeY = this.data.forca;
       this.noChao = false;

@@ -26,6 +26,8 @@
   </head>
 
   <body>
+    <div id="notification-container"></div>
+
     <div id="tela-loading">
       <div class="conteudo-loading">
         <h1>BASKETBALL.IO (DEV MODE)</h1>
@@ -101,6 +103,7 @@
       vr-mode-ui="enabled: false"
       debug-zonas="ativado: false"
       keyboard-shortcuts="enterVR: false"
+      debug-limites="ativado: false"
     >
 
     <a-sky src="#tex-ceu-hdri" rotation="0 -90 0"></a-sky>
@@ -137,6 +140,7 @@
             id="posicao-mao"
             position="0.35 -0.3 -0.6"
             rotation="-10 -10 0"
+            visible="false"
           >
             <a-box color="red" scale="0.05 0.05 0.05" visible="true"></a-box>
           </a-entity>
@@ -144,7 +148,7 @@
           <a-entity
             id="cursor-mira"
             cursor="fuse: false"
-            raycaster="objects: .interativo; far: 4"
+            raycaster="objects: .interativo; far: 8"
             position="0 0 -1"
             geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
             material="color: white; shader: flat; opacity: 0.9"
@@ -500,6 +504,10 @@
         trajetoria-previsao="pontos: 30; intervalo: 0.05; cor: red"
         config-fisica="restituicao: 0.95; atrito: 0.5"
       >
+        <a-sphere
+          radius="160"
+          material="opacity: 0; transparent: true; side: double"
+        ></a-sphere>
       </a-gltf-model>
       <a-gltf-model
         src="#modelo-painel"
@@ -548,6 +556,203 @@
           <a-entity digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222" position="0.45 0 0"></a-entity>
         </a-entity>
       </a-gltf-model>
+      <!-- FIM PLACAR -->
+
+      <!--DECORAÇÃO QUADRA -->
+      <a-gltf-model
+        src="#modelo-banco"
+        position="11.7 0 -9"
+        rotation="0 -90 0"
+        scale="0.025 0.025 0.025"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-radio"
+        position="11.95 1.9 -12.2"
+        rotation="0 -55 0"
+        scale="3 3 3"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-garrafa"
+        position="12.1 1.4 -6.6"
+        rotation="0 0 0"
+        scale="0.0005 0.0005 0.0005"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-copo"
+        position="11.85 1.05 -6.8"
+        rotation="0 0 0"
+        scale="0.05 0.05 0.05"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-mochila"
+        position="11.3 -0.25 -8.05"
+        rotation="-15 20 -15"
+        scale="0.4 0.4 0.4"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-gato"
+        position="10.7 0 13.5"
+        rotation="0 -225 0"
+        scale="0.05 0.05 0.05"
+        animation-mixer="clip: *; loop: repeat; timeScale: 1"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-comidagato"
+        position="9.7 -0.25 15.5"
+        rotation="0 -165 0"
+        scale="3 3 3"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-banco"
+        position="11.7 0 10.5"
+        rotation="0 -90 0"
+        scale="0.025 0.025 0.025"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-livro"
+        position="11.75 1.1 7.5"
+        rotation="0 145 90"
+        scale="0.4 0.4 0.4"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-varinha"
+        position="11.75 1.1 8.235"
+        rotation="0 -135 90"
+        scale="0.125 0.125 0.125"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-maquina"
+        position="-12 0 5"
+        rotation="0 90 0"
+        scale="0.05 0.05 0.05"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-lixeira"
+        position="-11.7 1.2 7.5"
+        rotation="0 90 0"
+        scale="1.5 1.5 1.5"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-jornal"
+        position="-11.5 2.33 7.52"
+        rotation="0 78 0"
+        scale="0.08 0.08 0.08"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-lixos"
+        position="-11.8 0 8.8"
+        rotation="0 125 0"
+        scale="1 1 1"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-papeis"
+        position="-10.7 0 12"
+        rotation="-90 180 0"
+        scale="1.5 1.5 1.5"
+      >
+      </a-gltf-model>
+      <a-gltf-model
+        src="#modelo-papeis"
+        position="-10.7 0.1 13"
+        rotation="-90 90 0"
+        scale="1.5 1.5 1.5"
+      >
+      </a-gltf-model>
+
+      <a-plane
+        src="#tex-logo-centro"
+        position="0 0.01 0"
+        rotation="-90 0 0"
+        width="3"
+        height="3"
+        transparent="true"
+        roughness="0.8"
+        metalness="0"
+      >
+      </a-plane>
+      <a-plane
+        src="#tex-imagem-chao"
+        position="11.8 0.01 4.8"
+        rotation="-90 0 -91.5"
+        width="2.39"
+        height="1"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+      <a-plane
+        src="#tex-simbolo2"
+        position="-7.1 0.01 15.25"
+        rotation="-90 180 0"
+        width="1.5"
+        height="1.5"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+      <a-plane
+        src="#tex-simbolo5"
+        position="7.07 0.01 15.25"
+        rotation="-90 180 0"
+        width="1.3"
+        height="1.3"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+      <a-plane
+        src="#tex-simbolo3"
+        position="-7.04 0.01 -15.25"
+        rotation="-90 0 0"
+        width="1.5"
+        height="1.5"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+
+      <a-plane
+        src="#tex-simbolo4"
+        position="7.1 0.01 -15.25"
+        rotation="-90 0 0"
+        width="1.3"
+        height="1.3"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+      <a-plane
+        src="#tex-imagem-home"
+        position="-10 0.1 -9.5"
+        rotation="-90 90 0"
+        width="13.63"
+        height="4.5"
+        transparent="true"
+        shader="flat"
+        side="double"
+      >
+      </a-plane>
+      <!--FIM DECORAÇÃO QUADRA-->
+
     </a-scene>
 
     <div id="hud-topo-container">
@@ -580,7 +785,7 @@
         <div class="control-label">Pegar Bola</div>
       </div>
 
-      <div class="control-row">
+      <div id="row-reset-placar" class="control-row">
         <div class="key-badge">R</div>
         <div class="control-label">Resetar Placar</div>
       </div>
@@ -648,7 +853,7 @@
           </div>
           <div class="control-label">Soltar</div>
         </div>
-        <div class="control-row">
+        <div id="row-btn-mira" class="control-row">
           <div class="key-badge">M</div>
           <div id="txt-mira" class="control-label">Desativar Mira</div>
         </div>
@@ -669,5 +874,45 @@
     <div id="hint-menu" class="oculto">
       Pressione <span class="tecla-destaque">G</span> para Guia
     </div>
-    </body>
+    <!-- FIM DICA MENU -->
+
+    <!-- INICIAR/SAIR MINIGAMES-->
+    <div id="minigame-prompts" class="oculto">
+      <div class="prompt-item">
+        <div class="key-badge" style="width: 28px; height: 28px">I</div>
+        <div class="prompt-label">INICIAR</div>
+      </div>
+      <div class="prompt-item">
+        <div class="key-badge" style="width: 28px; height: 28px">O</div>
+        <div class="prompt-label">SAIR</div>
+      </div>
+    </div>
+    <!--FIM INICIAR/SAIR MINIGAMES-->
+
+    <!-- TELAS DOS MINIGAMES -->
+    <div id="countdown-overlay" class="oculto">
+      <div id="countdown-text">3</div>
+    </div>
+
+    <div id="minigame-info" class="oculto">
+      <h2 id="info-titulo">NOME DO DESAFIO</h2>
+
+      <div class="info-row">
+        <span class="info-label">CESTA ALVO</span>
+        <span id="info-cesta" class="info-text" style="color: #ffd700"
+          >HOME</span
+        >
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">OBJETIVO</span>
+        <span id="info-objetivo" class="info-text">...</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">REGRA</span>
+        <span id="info-regra" class="info-text">...</span>
+      </div>
+    </div>
+    <!-- FIM TELAS DOS MINIGAMES -->
+  </body>
 </html>

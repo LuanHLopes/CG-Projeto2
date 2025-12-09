@@ -18,6 +18,7 @@ AFRAME.registerComponent("mecanica-arremesso", {
     this.forcaTotal = this.niveisForca[2];
     this.ajudaVertical = 0.45;
     this.massaBola = 0.62;
+    this.podeUsarT = true;
 
     this.processarAcao = this.processarAcao.bind(this);
     this.pegar = this.pegar.bind(this);
@@ -46,6 +47,15 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
   alternarMira: function (e) {
     if (e.code === "KeyM") {
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO &&
+        window.configMira === false
+      ) {
+        window.notificar("MIRA DESATIVADA NESTE MODO");
+        return;
+      }
+
       this.mostrarTrajetoria = !this.mostrarTrajetoria;
 
       if (this.txtMira) {
@@ -58,6 +68,30 @@ AFRAME.registerComponent("mecanica-arremesso", {
 
   invocarBola: function (e) {
     if (e.code === "KeyT") {
+      if (!this.podeUsarT) {
+        console.log("Tecla T desabilitada pelo sistema.");
+        return;
+      }
+
+      if (
+        window.estadoJogo &&
+        window.estadoJogo.status === window.GAME_STATUS.ATIVO
+      ) {
+        const posBola = new THREE.Vector3();
+        const posJogador = new THREE.Vector3();
+
+        this.el.object3D.getWorldPosition(posBola);
+        this.camera.object3D.getWorldPosition(posJogador);
+
+        const distancia = posJogador.distanceTo(posBola);
+        const DISTANCIA_MAXIMA = 8.0;
+
+        if (distancia > DISTANCIA_MAXIMA) {
+          window.notificar("APROXIME-SE PARA PEGAR A BOLA"); // <--- MUDOU
+          return;
+        }
+      }
+
       if (this.segurando) return;
 
       if (this.el.body) {
@@ -125,6 +159,24 @@ AFRAME.registerComponent("mecanica-arremesso", {
         this.el.body.quaternion.copy(rot);
         this.el.body.velocity.set(0, 0, 0);
         this.el.body.angularVelocity.set(0, 0, 0);
+      }
+    }
+
+    if (this.el.object3D.position.y < -10) {
+      console.log("♻️ Bola caiu no infinito. Resetando posição...");
+
+      const resetPos = { x: 0, y: 0.5, z: 0 };
+
+      this.el.object3D.position.set(resetPos.x, resetPos.y, resetPos.z);
+
+      if (this.el.body) {
+        this.el.body.position.set(resetPos.x, resetPos.y, resetPos.z);
+        this.el.body.velocity.set(0, 0, 0);
+        this.el.body.angularVelocity.set(0, 0, 0);
+      }
+
+      if (this.segurando) {
+        this.liberarBola();
       }
     }
   },
