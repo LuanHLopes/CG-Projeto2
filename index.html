@@ -28,9 +28,9 @@
   <body>
     <div id="tela-loading">
       <div class="conteudo-loading">
-        <h1>BASKETBALL.IO</h1>
+        <h1>BASKETBALL.IO (DEV MODE)</h1>
         <div class="basketball-spinner"></div>
-        <p>Renderizando quadra</p>
+        <p>Carregando ambiente de teste...</p>
       </div>
     </div>
 
@@ -92,8 +92,6 @@
         }
       }
     </style>
-    <!-- FIM TELA DE CARREGAMENTO -->
-
     <a-scene
       physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
@@ -104,7 +102,25 @@
       debug-zonas="ativado: false"
       keyboard-shortcuts="enterVR: false"
     >
-      <!-- CAMERA -->
+
+    <a-sky src="#tex-ceu-hdri" rotation="0 -90 0"></a-sky>
+
+    <a-entity id="ambiente-cidade">
+        <a-plane
+            src="#tex-asfalto-rua"
+            repeat="20 20" 
+            rotation="-90 0 0"
+            width="110"  
+            height="110" 
+            position="0 -0.15 0" 
+            color="#999"
+            roughness="0.8"
+            shadow="receive: true"
+        ></a-plane>
+
+        <a-entity gerador-quarteirao></a-entity>
+    </a-entity>
+
       <a-entity
         id="rig-jogador"
         position="0 0 5"
@@ -137,93 +153,20 @@
           </a-entity>
         </a-camera>
       </a-entity>
-      <!-- FIM CAMERA -->
-
-      <!-- IMPORT ASSETS-->
       <a-assets timeout="10000">
         <a-asset-item id="modelo-cesta" src="./assets/cesta.glb"></a-asset-item>
         <a-asset-item id="modelo-cerca" src="./assets/cerca.glb"></a-asset-item>
         <a-asset-item id="modelo-bola" src="./assets/bola.glb"></a-asset-item>
-        <a-asset-item
-          id="modelo-placar"
-          src="./assets/placar.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-painel"
-          src="./assets/painel.glb"
-        ></a-asset-item>
+        <a-asset-item id="modelo-placar" src="./assets/placar.glb"></a-asset-item>
+        <a-asset-item id="modelo-painel" src="./assets/painel.glb"></a-asset-item>
 
-        <a-asset-item
-          id="modelo-banco"
-          src="./assets/decoracao-quadra/banco.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-radio"
-          src="./assets/decoracao-quadra/radio.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-garrafa"
-          src="./assets/decoracao-quadra/garrafa.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-copo"
-          src="./assets/decoracao-quadra/copo.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-mochila"
-          src="./assets/decoracao-quadra/mochila.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-gato"
-          src="./assets/decoracao-quadra/gato.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-maquina"
-          src="./assets/decoracao-quadra/maquina.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-lixeira"
-          src="./assets/decoracao-quadra/lixeira.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-papeis"
-          src="./assets/decoracao-quadra/papeis.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-lixos"
-          src="./assets/decoracao-quadra/lixos.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-jornal"
-          src="./assets/decoracao-quadra/jornal.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-livro"
-          src="./assets/decoracao-quadra/livro.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-varinha"
-          src="./assets/decoracao-quadra/varinha.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="modelo-comidagato"
-          src="./assets/decoracao-quadra/comidagato.glb"
-        ></a-asset-item>
-
-        <img id="tex-logo-centro" src="./assets/imagens/simbolo.webp" />
-        <img id="tex-imagem-chao" src="./assets/imagens/ordem.png" />
-        <img id="tex-imagem-home" src="./assets/imagens/hexatombe.png" />
-        <img id="tex-simbolo2" src="./assets/imagens/simbolo2.png" />
-        <img id="tex-simbolo3" src="./assets/imagens/simbolo3.webp" />
-        <img id="tex-simbolo4" src="./assets/imagens/simbolo4.webp" />
-        <img id="tex-simbolo5" src="./assets/imagens/simbolo5.webp" />
         <img id="tex-cimento" src="./assets/texturas/cimento.jpg" />
-      </a-assets>
-      <!-- FIM IMPORT ASSETS-->
-
-      <!--QUADRA DE BASQUETE A -->
+        <img id="tex-asfalto-rua" src="./assets/texturas/asfalto.jpg" />
+        <img id="tex-fachada-predio" src="./assets/texturas/predio.png" />
+        <img id="tex-ceu-hdri" src="./assets/texturas/ceu.png" />
+        
+        </a-assets>
       <a-entity position="0 0 -7.1625">
-        <!-- LATERAL QUADRA -->
         <a-plane
           src="#tex-cimento"
           repeat="10 10"
@@ -245,11 +188,7 @@
           config-fisica="restituicao: 0.6; atrito: 0.6"
         >
         </a-box>
-        <!-- FIM LATERAL QUADRA -->
-
-        <!-- QUADRA DE BASQUETE -->
         <a-entity position="0 0 0">
-          <!-- CHÃO -->
           <a-plane
             src="#tex-cimento"
             repeat="6 6"
@@ -268,9 +207,6 @@
             position="0 -0.5 0"
           >
           </a-box>
-          <!-- FIM CHÃO -->
-
-          <!-- LINHAS LATERAIS -->
           <a-plane
             color="white"
             width="0.05"
@@ -299,11 +235,7 @@
             rotation="-90 0 0"
             position="0 0.01 7.1625"
           ></a-plane>
-          <!-- FIM LINHAS LATERAIS -->
-
-          <!-- GARRAFÃO -->
           <a-entity position="0 0.01 0">
-            <!-- LINHAS GARRAFÃO -->
             <a-plane
               color="#333333"
               opacity="0.6"
@@ -337,227 +269,38 @@
               rotation="-90 0 0"
               position="0 0.021 -1.3725"
             ></a-plane>
-            <!-- FIM LINHAS GARRAFÃO -->
-
-            <!-- CIRCULO GARRAFÃO -->
             <a-entity position="0 0 -1.3725" rotation="-90 0 0">
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="0"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="10"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="20"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="30"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="40"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="50"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="60"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="70"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="80"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="90"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="100"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="110"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="120"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="130"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="140"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="150"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="160"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="170"
-                theta-length="7"
-              ></a-ring>
-
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="180"
-                theta-length="180"
-                segments-theta="128"
-              ></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="0" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="10" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="20" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="30" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="40" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="50" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="60" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="70" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="80" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="90" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="100" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="110" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="120" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="130" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="140" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="150" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="160" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="170" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="180" theta-length="180" segments-theta="128"></a-ring>
             </a-entity>
-            <!-- FIM DO CIRCULO GARRAFÃO -->
-
-            <!-- LINHAS REBOTE -->
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="-2.44 0.021 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="2.44 0.021 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.1"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -5.4125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -4.5625"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -3.7125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -2.8625"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.1"
-              rotation="-90 0 0"
-              position="2.44 0.02 -5.4125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -4.5625"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -3.7125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -2.8625"
-            ></a-plane>
-            <!-- FIM LINHAS REBOTE -->
-          </a-entity>
-          <!-- FIM GARRAFÃO-->
-
-          <!-- MEIA LUA -->
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="-2.44 0.021 -4.2675"></a-plane>
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="2.44 0.021 -4.2675"></a-plane>
+            <a-plane color="white" width="0.2" height="0.1" rotation="-90 0 0" position="-2.44 0.02 -5.4125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -4.5625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -3.7125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -2.8625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.1" rotation="-90 0 0" position="2.44 0.02 -5.4125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -4.5625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -3.7125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -2.8625"></a-plane>
+            </a-entity>
           <a-entity id="zona-3pts-1">
             <a-ring
               id="linha-3-a"
@@ -574,72 +317,13 @@
             >
             </a-ring>
 
-            <a-plane
-              color="white"
-              width="0.046"
-              height="1.575"
-              rotation="-90 0 0"
-              position="-6.517 0.01 -6.375"
-              class="molde-geometria"
-            >
-            </a-plane>
-
-            <a-plane
-              color="white"
-              width="0.046"
-              height="1.575"
-              rotation="-90 0 0"
-              position="6.517 0.01 -6.375"
-              class="molde-geometria"
-            >
-            </a-plane>
-            <a-plane
-              color="white"
-              width="13.08"
-              height="0.046"
-              rotation="-90 0 0"
-              position="0 0.01 -7.1625"
-              class="molde-geometria"
-            >
-            </a-plane>
+            <a-plane color="white" width="0.046" height="1.575" rotation="-90 0 0" position="-6.517 0.01 -6.375" class="molde-geometria"></a-plane>
+            <a-plane color="white" width="0.046" height="1.575" rotation="-90 0 0" position="6.517 0.01 -6.375" class="molde-geometria"></a-plane>
+            <a-plane color="white" width="13.08" height="0.046" rotation="-90 0 0" position="0 0.01 -7.1625" class="molde-geometria"></a-plane>
           </a-entity>
-          <!-- FIM MEIA LUA -->
-
-          <!-- CIRCULO CENTRAL -->
-          <a-ring
-            color="white"
-            radius-inner="1.80"
-            radius-outer="1.85"
-            theta-start="0"
-            theta-length="180"
-            rotation="-90 0 0"
-            position="0 0.01 7.1625"
-            segments-theta="128"
-          >
-          </a-ring>
-          <!-- FIM CIRCULO CENTRAL -->
-
-          <!-- LINHAS DE REPOSIÇÃO -->
-          <a-plane
-            color="white"
-            width="0.5"
-            height="0.05"
-            rotation="-90 0 0"
-            position="-7.62 0.02 1.6775"
-          >
-          </a-plane>
-
-          <a-plane
-            color="white"
-            width="0.5"
-            height="0.05"
-            rotation="-90 0 0"
-            position="7.62 0.02 1.6775"
-          >
-          </a-plane>
-          <!-- FIM LINHAS DE REPOSIÇÃO -->
-
-          <!-- CESTA -->
+          <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="0" theta-length="180" rotation="-90 0 0" position="0 0.01 7.1625" segments-theta="128"></a-ring>
+          <a-plane color="white" width="0.5" height="0.05" rotation="-90 0 0" position="-7.62 0.02 1.6775"></a-plane>
+          <a-plane color="white" width="0.5" height="0.05" rotation="-90 0 0" position="7.62 0.02 1.6775"></a-plane>
           <a-gltf-model
             id="cesta"
             src="#modelo-cesta"
@@ -700,661 +384,108 @@
               config-fisica="restituicao: 0.5; atrito: 0.2"
             ></a-torus>
 
-            <a-cylinder
-              radius="0.20"
-              height="0.05"
-              position="0 3.18 1.6"
-              visible="false"
-              static-body="shape: cylinder"
-              sensor-boca
-            >
-            </a-cylinder>
-
-            <a-cylinder
-              radius="0.15"
-              height="0.1"
-              position="0 2.9 1.6"
-              visible="false"
-              static-body="shape: cylinder"
-              sensor="id: 1"
-            >
-            </a-cylinder>
+            <a-cylinder radius="0.20" height="0.05" position="0 3.18 1.6" visible="false" static-body="shape: cylinder" sensor-boca></a-cylinder>
+            <a-cylinder radius="0.15" height="0.1" position="0 2.9 1.6" visible="false" static-body="shape: cylinder" sensor="id: 1"></a-cylinder>
           </a-gltf-model>
-          <!-- FIM DA CESTA -->
-        </a-entity>
-        <!-- FIM QUADRA DE BASQUETE -->
-
-        <!-- CERCAS AO REDOR DA QUADRA -->
+          </a-entity>
         <a-entity position="0 0 -9.16">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="-6.3 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="6.3 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="25.5"
-            height="5"
-            depth="0.5"
-            position="0 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          >
-          </a-box>
+          <a-gltf-model src="#modelo-cerca" position="-6.3 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-gltf-model src="#modelo-cerca" position="6.3 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="25.5" height="5" depth="0.5" position="0 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
 
         <a-entity position="-12.62 0 -1" rotation="0 90 0">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="1.9 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="12.9"
-            height="5"
-            depth="0.5"
-            position="2 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          ></a-box>
+          <a-gltf-model src="#modelo-cerca" position="1.9 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="12.9" height="5" depth="0.5" position="2 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
 
         <a-entity position="12.62 0 -1" rotation="0 -90 0">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="-1.9 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="8.2 0 0"
-            scale="0.538 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="20.3"
-            height="5"
-            depth="0.5"
-            position="2 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          ></a-box>
+          <a-gltf-model src="#modelo-cerca" position="-1.9 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-gltf-model src="#modelo-cerca" position="8.2 0 0" scale="0.538 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="20.3" height="5" depth="0.5" position="2 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
-        <!-- FIM CERCAS AO REDOR DA QUADRA -->
-      </a-entity>
-      <!-- FIM QUADRA DE BASQUETE A -->
-
-      <!--QUADRA DE BASQUETE B -->
+        </a-entity>
       <a-entity position="0 0 7.1625" rotation="0 180 0">
-        <!-- LATERAL QUADRA -->
-        <a-plane
-          src="#tex-cimento"
-          repeat="10 10"
-          color="#fff"
-          roughness="1"
-          width="25.24"
-          height="16.325"
-          rotation="-90 0 0"
-          position="0 -0.01 -1"
-        ></a-plane>
-
-        <a-box
-          static-body
-          visible="false"
-          width="25.24"
-          depth="16.325"
-          height="1"
-          position="0 -0.51 -1"
-          config-fisica="restituicao: 0.6; atrito: 0.6"
-        >
-        </a-box>
-        <!-- FIM LATERAL QUADRA -->
-
-        <!-- QUADRA DE BASQUETE -->
+        <a-plane src="#tex-cimento" repeat="10 10" color="#fff" roughness="1" width="25.24" height="16.325" rotation="-90 0 0" position="0 -0.01 -1"></a-plane>
+        <a-box static-body visible="false" width="25.24" depth="16.325" height="1" position="0 -0.51 -1" config-fisica="restituicao: 0.6; atrito: 0.6"></a-box>
         <a-entity position="0 0 0">
-          <!-- CHÃO -->
-          <a-plane
-            src="#tex-cimento"
-            repeat="6 6"
-            roughness="1"
-            width="15.24"
-            height="14.325"
-            rotation="-90 0 0"
-          ></a-plane>
-
-          <a-box
-            static-body
-            visible="false"
-            width="15.24"
-            depth="14.325"
-            height="1"
-            position="0 -0.5 0"
-          >
-          </a-box>
-          <!-- FIM CHÃO -->
-
-          <!-- LINHAS LATERAIS -->
-          <a-plane
-            color="white"
-            width="0.05"
-            height="14.325"
-            rotation="-90 0 0"
-            position="-7.62 0.01 0"
-          ></a-plane>
-          <a-plane
-            color="white"
-            width="0.05"
-            height="14.325"
-            rotation="-90 0 0"
-            position="7.62 0.01 0"
-          ></a-plane>
-          <a-plane
-            color="white"
-            width="15.29"
-            height="0.05"
-            rotation="-90 0 0"
-            position="0 0.01 -7.1625"
-          ></a-plane>
-          <a-plane
-            color="white"
-            width="15.29"
-            height="0.05"
-            rotation="-90 0 0"
-            position="0 0.01 7.1625"
-          ></a-plane>
-          <!-- FIM LINHAS LATERAIS -->
-
-          <!-- GARRAFÃO -->
+          <a-plane src="#tex-cimento" repeat="6 6" roughness="1" width="15.24" height="14.325" rotation="-90 0 0"></a-plane>
+          <a-box static-body visible="false" width="15.24" depth="14.325" height="1" position="0 -0.5 0"></a-box>
+          <a-plane color="white" width="0.05" height="14.325" rotation="-90 0 0" position="-7.62 0.01 0"></a-plane>
+          <a-plane color="white" width="0.05" height="14.325" rotation="-90 0 0" position="7.62 0.01 0"></a-plane>
+          <a-plane color="white" width="15.29" height="0.05" rotation="-90 0 0" position="0 0.01 -7.1625"></a-plane>
+          <a-plane color="white" width="15.29" height="0.05" rotation="-90 0 0" position="0 0.01 7.1625"></a-plane>
           <a-entity position="0 0.01 0">
-            <!-- LINHAS GARRAFÃO -->
-            <a-plane
-              color="#333333"
-              opacity="0.6"
-              transparent="true"
-              width="3.7"
-              height="5.79"
-              rotation="-90 0 0"
-              position="0 -0.001 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="-1.825 0 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="1.825 0 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="4.93"
-              height="0.05"
-              rotation="-90 0 0"
-              position="0 0.021 -1.3725"
-            ></a-plane>
-            <!-- FIM LINHAS GARRAFÃO -->
-
-            <!-- CIRCULO GARRAFÃO -->
+            <a-plane color="#333333" opacity="0.6" transparent="true" width="3.7" height="5.79" rotation="-90 0 0" position="0 -0.001 -4.2675"></a-plane>
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="-1.825 0 -4.2675"></a-plane>
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="1.825 0 -4.2675"></a-plane>
+            <a-plane color="white" width="4.93" height="0.05" rotation="-90 0 0" position="0 0.021 -1.3725"></a-plane>
             <a-entity position="0 0 -1.3725" rotation="-90 0 0">
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="0"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="10"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="20"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="30"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="40"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="50"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="60"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="70"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="80"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="90"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="100"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="110"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="120"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="130"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="140"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="150"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="160"
-                theta-length="7"
-              ></a-ring>
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="170"
-                theta-length="7"
-              ></a-ring>
-
-              <a-ring
-                color="white"
-                radius-inner="1.80"
-                radius-outer="1.85"
-                theta-start="180"
-                theta-length="180"
-                segments-theta="128"
-              ></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="0" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="10" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="20" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="30" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="40" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="50" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="60" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="70" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="80" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="90" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="100" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="110" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="120" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="130" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="140" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="150" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="160" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="170" theta-length="7"></a-ring>
+              <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="180" theta-length="180" segments-theta="128"></a-ring>
             </a-entity>
-            <!-- FIM DO CIRCULO GARRAFÃO -->
-
-            <!-- LINHAS REBOTE -->
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="-2.44 0.021 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.05"
-              height="5.79"
-              rotation="-90 0 0"
-              position="2.44 0.021 -4.2675"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.1"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -5.4125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -4.5625"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -3.7125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="-2.44 0.02 -2.8625"
-            ></a-plane>
-
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.1"
-              rotation="-90 0 0"
-              position="2.44 0.02 -5.4125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -4.5625"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -3.7125"
-            ></a-plane>
-            <a-plane
-              color="white"
-              width="0.2"
-              height="0.05"
-              rotation="-90 0 0"
-              position="2.44 0.02 -2.8625"
-            ></a-plane>
-            <!-- FIM LINHAS REBOTE -->
-          </a-entity>
-          <!-- FIM GARRAFÃO-->
-
-          <!-- MEIA LUA -->
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="-2.44 0.021 -4.2675"></a-plane>
+            <a-plane color="white" width="0.05" height="5.79" rotation="-90 0 0" position="2.44 0.021 -4.2675"></a-plane>
+            <a-plane color="white" width="0.2" height="0.1" rotation="-90 0 0" position="-2.44 0.02 -5.4125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -4.5625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -3.7125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="-2.44 0.02 -2.8625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.1" rotation="-90 0 0" position="2.44 0.02 -5.4125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -4.5625"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -3.7125"></a-plane>
+            <a-plane color="white" width="0.2" height="0.05" rotation="-90 0 0" position="2.44 0.02 -2.8625"></a-plane>
+            </a-entity>
           <a-entity id="zona-3pts-2">
-            <a-ring
-              id="linha-3-b"
-              color="white"
-              radius-inner="7.215"
-              radius-outer="7.265"
-              theta-start="0"
-              theta-length="180"
-              rotation="-90 180 0"
-              position="0 0.01 -5.5875"
-              scale="0.9 1 1"
-              segments-theta="128"
-              class="molde-geometria"
-            >
-            </a-ring>
-
-            <a-plane
-              color="white"
-              width="0.046"
-              height="1.575"
-              rotation="-90 0 0"
-              position="-6.517 0.01 -6.375"
-              class="molde-geometria"
-            >
-            </a-plane>
-
-            <a-plane
-              color="white"
-              width="0.046"
-              height="1.575"
-              rotation="-90 0 0"
-              position="6.517 0.01 -6.375"
-              class="molde-geometria"
-            >
-            </a-plane>
-            <a-plane
-              color="white"
-              width="13.08"
-              height="0.046"
-              rotation="-90 0 0"
-              position="0 0.01 -7.1625"
-              class="molde-geometria"
-            >
-            </a-plane>
+            <a-ring id="linha-3-b" color="white" radius-inner="7.215" radius-outer="7.265" theta-start="0" theta-length="180" rotation="-90 180 0" position="0 0.01 -5.5875" scale="0.9 1 1" segments-theta="128" class="molde-geometria"></a-ring>
+            <a-plane color="white" width="0.046" height="1.575" rotation="-90 0 0" position="-6.517 0.01 -6.375" class="molde-geometria"></a-plane>
+            <a-plane color="white" width="0.046" height="1.575" rotation="-90 0 0" position="6.517 0.01 -6.375" class="molde-geometria"></a-plane>
+            <a-plane color="white" width="13.08" height="0.046" rotation="-90 0 0" position="0 0.01 -7.1625" class="molde-geometria"></a-plane>
           </a-entity>
-          <!-- FIM MEIA LUA -->
-
-          <!-- CIRCULO CENTRAL -->
-          <a-ring
-            color="white"
-            radius-inner="1.80"
-            radius-outer="1.85"
-            theta-start="0"
-            theta-length="180"
-            rotation="-90 0 0"
-            position="0 0.01 7.1625"
-            segments-theta="128"
-          >
-          </a-ring>
-          <!-- FIM CIRCULO CENTRAL -->
-
-          <!-- LINHAS DE REPOSIÇÃO -->
-          <a-plane
-            color="white"
-            width="0.5"
-            height="0.05"
-            rotation="-90 0 0"
-            position="-7.62 0.02 1.6775"
-          >
-          </a-plane>
-
-          <a-plane
-            color="white"
-            width="0.5"
-            height="0.05"
-            rotation="-90 0 0"
-            position="7.62 0.02 1.6775"
-          >
-          </a-plane>
-          <!-- FIM LINHAS DE REPOSIÇÃO -->
-
-          <!-- CESTA -->
-          <a-gltf-model
-            id="cesta"
-            src="#modelo-cesta"
-            position="0 0 -8"
-            rotation="0 0 0"
-            scale="1.5 1.5 1.5"
-          >
-            <a-box
-              id="colisor-tabela"
-              width="1.799"
-              height="1.2"
-              depth="0.1"
-              position="0 3.46 1.2"
-              visible="false"
-              static-body
-              config-fisica="restituicao: 0.7; atrito: 0.3"
-            >
-            </a-box>
-
-            <a-box
-              id="colisor-poste"
-              static-body
-              visible="false"
-              color="green"
-              opacity="0.5"
-              width="0.3"
-              depth="0.3"
-              height="2.8"
-              position="0 1.2 0"
-              config-fisica="restituicao: 0.6; atrito: 0.3"
-            >
-            </a-box>
-
-            <a-box
-              id="colisor-base-b"
-              static-body
-              visible="true"
-              color="#ffaa00"
-              width="0.6"
-              depth="0.55"
-              height="0.15"
-              position="0 0 0"
-              material="roughness: 0.8"
-              config-fisica="restituicao: 0.6; atrito: 0.3"
-            >
-            </a-box>
-
-            <a-torus
-              id="colisor-aro"
-              color="red"
-              material="wireframe: true; transparent: true; opacity: 0.7"
-              radius="0.28"
-              radius-tubular="0.01"
-              rotation="90 0 0"
-              position="0 3.18 1.6"
-              visible="false"
-              static-body="shape: mesh;"
-              config-fisica="restituicao: 0.5; atrito: 0.2"
-            ></a-torus>
-
-            <a-cylinder
-              radius="0.20"
-              height="0.05"
-              position="0 3.18 1.6"
-              visible="false"
-              static-body="shape: cylinder"
-              sensor-boca
-            >
-            </a-cylinder>
-
-            <a-cylinder
-              radius="0.15"
-              height="0.1"
-              position="0 2.9 1.6"
-              visible="false"
-              static-body="shape: cylinder"
-              sensor="id: 2"
-            >
-            </a-cylinder>
+          <a-ring color="white" radius-inner="1.80" radius-outer="1.85" theta-start="0" theta-length="180" rotation="-90 0 0" position="0 0.01 7.1625" segments-theta="128"></a-ring>
+          <a-plane color="white" width="0.5" height="0.05" rotation="-90 0 0" position="-7.62 0.02 1.6775"></a-plane>
+          <a-plane color="white" width="0.5" height="0.05" rotation="-90 0 0" position="7.62 0.02 1.6775"></a-plane>
+          <a-gltf-model id="cesta" src="#modelo-cesta" position="0 0 -8" rotation="0 0 0" scale="1.5 1.5 1.5">
+            <a-box id="colisor-tabela" width="1.799" height="1.2" depth="0.1" position="0 3.46 1.2" visible="false" static-body config-fisica="restituicao: 0.7; atrito: 0.3"></a-box>
+            <a-box id="colisor-poste" static-body visible="false" color="green" opacity="0.5" width="0.3" depth="0.3" height="2.8" position="0 1.2 0" config-fisica="restituicao: 0.6; atrito: 0.3"></a-box>
+            <a-box id="colisor-base-b" static-body visible="true" color="#ffaa00" width="0.6" depth="0.55" height="0.15" position="0 0 0" material="roughness: 0.8" config-fisica="restituicao: 0.6; atrito: 0.3"></a-box>
+            <a-torus id="colisor-aro" color="red" material="wireframe: true; transparent: true; opacity: 0.7" radius="0.28" radius-tubular="0.01" rotation="90 0 0" position="0 3.18 1.6" visible="false" static-body="shape: mesh;" config-fisica="restituicao: 0.5; atrito: 0.2"></a-torus>
+            <a-cylinder radius="0.20" height="0.05" position="0 3.18 1.6" visible="false" static-body="shape: cylinder" sensor-boca></a-cylinder>
+            <a-cylinder radius="0.15" height="0.1" position="0 2.9 1.6" visible="false" static-body="shape: cylinder" sensor="id: 2"></a-cylinder>
           </a-gltf-model>
-          <!-- FIM DA CESTA -->
-        </a-entity>
-        <!-- FIM QUADRA DE BASQUETE -->
-
-        <!-- CERCAS AO REDOR DA QUADRA -->
+          </a-entity>
         <a-entity position="0 0 -9.16">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="-6.3 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="6.3 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="25.5"
-            height="5"
-            depth="0.5"
-            position="0 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          >
-          </a-box>
+          <a-gltf-model src="#modelo-cerca" position="-6.3 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-gltf-model src="#modelo-cerca" position="6.3 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="25.5" height="5" depth="0.5" position="0 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
 
         <a-entity position="-12.62 0 -1" rotation="0 90 0">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="1.9 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="12.9"
-            height="5"
-            depth="0.5"
-            position="2 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          ></a-box>
+          <a-gltf-model src="#modelo-cerca" position="1.9 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="12.9" height="5" depth="0.5" position="2 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
 
         <a-entity position="12.62 0 -1" rotation="0 -90 0">
-          <a-gltf-model
-            src="#modelo-cerca"
-            position="-1.9 0 0"
-            scale="0.9 0.9 0.9"
-          ></a-gltf-model>
-          <a-box
-            static-body
-            visible="false"
-            width="12.9"
-            height="5"
-            depth="0.5"
-            position="-2 2.5 0"
-            config-fisica="restituicao: 0.4; atrito: 0.5"
-          ></a-box>
+          <a-gltf-model src="#modelo-cerca" position="-1.9 0 0" scale="0.9 0.9 0.9"></a-gltf-model>
+          <a-box static-body visible="false" width="12.9" height="5" depth="0.5" position="-2 2.5 0" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
         </a-entity>
-        <!-- FIM CERCAS AO REDOR DA QUADRA -->
-      </a-entity>
-      <!-- FIM QUADRA DE BASQUETE B -->
-
-      <!-- BOLA DE BASQUETE -->
+        </a-entity>
       <a-gltf-model
         id="bola"
         src="#modelo-bola"
@@ -1370,100 +501,23 @@
         config-fisica="restituicao: 0.95; atrito: 0.5"
       >
       </a-gltf-model>
-      <!-- FIM BOLA DE BASQUETE -->
-
-      <!-- PAINEL -->
       <a-gltf-model
         src="#modelo-painel"
         position="11.5 0 -2.73"
         rotation="0 -90 0"
         scale="0.045 0.045 0.045"
       >
-        <a-box
-          static-body
-          visible="false"
-          width="134"
-          height="100"
-          depth="22"
-          position="61 103 -8.5"
-          config-fisica="restituicao: 0.4; atrito: 0.5"
-        >
-        </a-box>
-        <a-box
-          static-body
-          visible="false"
-          width="5"
-          height="53"
-          depth="20"
-          position="2 27 -10"
-          config-fisica="restituicao: 0.4; atrito: 0.5"
-        >
-        </a-box>
-        <a-box
-          static-body
-          visible="false"
-          width="5"
-          height="53"
-          depth="20"
-          position="60.5 27 -10"
-          config-fisica="restituicao: 0.4; atrito: 0.5"
-        >
-        </a-box>
-        <a-box
-          static-body
-          visible="false"
-          width="5"
-          height="53"
-          depth="20"
-          position="119.5 27 -10"
-          config-fisica="restituicao: 0.4; atrito: 0.5"
-        >
-        </a-box>
+        <a-box static-body visible="false" width="134" height="100" depth="22" position="61 103 -8.5" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
+        <a-box static-body visible="false" width="5" height="53" depth="20" position="2 27 -10" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
+        <a-box static-body visible="false" width="5" height="53" depth="20" position="60.5 27 -10" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
+        <a-box static-body visible="false" width="5" height="53" depth="20" position="119.5 27 -10" config-fisica="restituicao: 0.4; atrito: 0.5"></a-box>
 
-        <!-- AREA DO MENU -->
-        <a-entity
-          id="zona-interacao-player"
-          position="57 1 40"
-          rotation="-90 0 0"
-        >
-          <a-plane
-            width="170"
-            height="120"
-            color="#ff0000"
-            opacity="0.25"
-            transparent="true"
-            shader="flat"
-            side="double"
-            visible="false"
-          >
-          </a-plane>
-
-          <a-plane
-            width="170"
-            height="120"
-            material="shader: flat; wireframe: true; color: #ff0000; wireframeLinewidth: 2"
-            visible="false"
-          >
-          </a-plane>
-
-          <a-text
-            value="AREA DE MENU"
-            align="center"
-            position="0 20 0"
-            rotation="0 0 180"
-            scale="20 20 20"
-            color="#ff0000"
-            opacity="0.7"
-            visible="false"
-          >
-          </a-text>
+        <a-entity id="zona-interacao-player" position="57 1 40" rotation="-90 0 0">
+          <a-plane width="170" height="120" color="#ff0000" opacity="0.25" transparent="true" shader="flat" side="double" visible="false"></a-plane>
+          <a-plane width="170" height="120" material="shader: flat; wireframe: true; color: #ff0000; wireframeLinewidth: 2" visible="false"></a-plane>
+          <a-text value="AREA DE MENU" align="center" position="0 20 0" rotation="0 0 180" scale="20 20 20" color="#ff0000" opacity="0.7" visible="false"></a-text>
         </a-entity>
-        <!-- FIM ÁREA DO MENU -->
-      </a-gltf-model>
-
-      <!-- FIM PAINEL -->
-
-      <!-- PLACAR -->
+        </a-gltf-model>
       <a-gltf-model
         id="placar-principal"
         src="#modelo-placar"
@@ -1474,269 +528,28 @@
         menu-placar
       >
         <a-entity id="grupo-tempo" cronometro-tempo position="4.23 12.65 -8.7">
-          <a-entity
-            id="cron-s-dezena"
-            digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222"
-            position="-0.65 0 0"
-          ></a-entity>
-          <a-entity
-            id="cron-s-unidade"
-            digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222"
-            position="-0.25 0 0"
-          ></a-entity>
-
+          <a-entity id="cron-s-dezena" digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222" position="-0.65 0 0"></a-entity>
+          <a-entity id="cron-s-unidade" digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222" position="-0.25 0 0"></a-entity>
           <a-entity position="0.1 0.04 0" scale="1.5 1.5 1">
-            <a-plane
-              color="#222222"
-              width="0.04"
-              height="0.04"
-              position="0 0.05 0"
-              side="double"
-            ></a-plane>
-            <a-plane
-              color="#222222"
-              width="0.04"
-              height="0.04"
-              position="0 -0.1 0"
-              side="double"
-            ></a-plane>
+            <a-plane color="#222222" width="0.04" height="0.04" position="0 0.05 0" side="double"></a-plane>
+            <a-plane color="#222222" width="0.04" height="0.04" position="0 -0.1 0" side="double"></a-plane>
           </a-entity>
-
-          <a-entity
-            id="cron-ms-dezena"
-            digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222"
-            position="0.45 0 0"
-          ></a-entity>
-          <a-entity
-            id="cron-ms-unidade"
-            digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222"
-            position="0.85 0 0"
-          ></a-entity>
+          <a-entity id="cron-ms-dezena" digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222" position="0.45 0 0"></a-entity>
+          <a-entity id="cron-ms-unidade" digito-led="tamanho: 1.9; espessura: 0.04; corInativa: #222222" position="0.85 0 0"></a-entity>
         </a-entity>
 
         <a-entity id="grupo-home" position="2.424 10.01 -8.7">
-          <a-entity
-            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222"
-            position="-0.58 0 0"
-          ></a-entity>
-          <a-entity
-            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222"
-            position="0.45 0 0"
-          ></a-entity>
+          <a-entity digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222" position="-0.58 0 0"></a-entity>
+          <a-entity digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222" position="0.45 0 0"></a-entity>
         </a-entity>
 
         <a-entity id="grupo-guest" position="6.305 10.01 -8.7">
-          <a-entity
-            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222"
-            position="-0.58 0 0"
-          ></a-entity>
-          <a-entity
-            digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222"
-            position="0.45 0 0"
-          ></a-entity>
+          <a-entity digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222" position="-0.58 0 0"></a-entity>
+          <a-entity digito-led="tamanho: 3.85; espessura: 0.05; corInativa: #222222" position="0.45 0 0"></a-entity>
         </a-entity>
       </a-gltf-model>
-      <!-- FIM PLACAR -->
-
-      <!--DECORAÇÃO QUADRA -->
-      <a-gltf-model
-        src="#modelo-banco"
-        position="11.7 0 -9"
-        rotation="0 -90 0"
-        scale="0.025 0.025 0.025"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-radio"
-        position="11.95 1.9 -12.2"
-        rotation="0 -55 0"
-        scale="3 3 3"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-garrafa"
-        position="12.1 1.4 -6.6"
-        rotation="0 0 0"
-        scale="0.0005 0.0005 0.0005"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-copo"
-        position="11.85 1.05 -6.8"
-        rotation="0 0 0"
-        scale="0.05 0.05 0.05"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-mochila"
-        position="11.3 -0.25 -8.05"
-        rotation="-15 20 -15"
-        scale="0.4 0.4 0.4"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-gato"
-        position="10.7 0 13.5"
-        rotation="0 -225 0"
-        scale="0.05 0.05 0.05"
-        animation-mixer="clip: *; loop: repeat; timeScale: 1"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-comidagato"
-        position="9.7 -0.25 15.5"
-        rotation="0 -165 0"
-        scale="3 3 3"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-banco"
-        position="11.7 0 10.5"
-        rotation="0 -90 0"
-        scale="0.025 0.025 0.025"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-livro"
-        position="11.75 1 7.5"
-        rotation="0 145 90"
-        scale="0.4 0.4 0.4"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-varinha"
-        position="11.75 1.1 8.235"
-        rotation="0 -135 90"
-        scale="0.125 0.125 0.125"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-maquina"
-        position="-12 0 5"
-        rotation="0 90 0"
-        scale="0.05 0.05 0.05"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-lixeira"
-        position="-11.7 1.2 7.5"
-        rotation="0 90 0"
-        scale="1.5 1.5 1.5"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-jornal"
-        position="-11.5 2.33 7.52"
-        rotation="0 78 0"
-        scale="0.08 0.08 0.08"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-lixos"
-        position="-11.8 0 8.8"
-        rotation="0 125 0"
-        scale="1 1 1"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-papeis"
-        position="-10.7 0 12"
-        rotation="-90 180 0"
-        scale="1.5 1.5 1.5"
-      >
-      </a-gltf-model>
-      <a-gltf-model
-        src="#modelo-papeis"
-        position="-10.7 0.1 13"
-        rotation="-90 90 0"
-        scale="1.5 1.5 1.5"
-      >
-      </a-gltf-model>
-
-      <a-plane
-        src="#tex-logo-centro"
-        position="0 0.01 0"
-        rotation="-90 0 0"
-        width="3"
-        height="3"
-        transparent="true"
-        roughness="0.8"
-        metalness="0"
-      >
-      </a-plane>
-      <a-plane
-        src="#tex-imagem-chao"
-        position="11.8 0.01 4.8"
-        rotation="-90 0 -91.5"
-        width="2.39"
-        height="1"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-      <a-plane
-        src="#tex-simbolo2"
-        position="-7.1 0.01 15.25"
-        rotation="-90 180 0"
-        width="1.5"
-        height="1.5"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-      <a-plane
-        src="#tex-simbolo5"
-        position="7.07 0.01 15.25"
-        rotation="-90 180 0"
-        width="1.3"
-        height="1.3"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-      <a-plane
-        src="#tex-simbolo3"
-        position="-7.04 0.01 -15.25"
-        rotation="-90 0 0"
-        width="1.5"
-        height="1.5"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-
-      <a-plane
-        src="#tex-simbolo4"
-        position="7.1 0.01 -15.25"
-        rotation="-90 0 0"
-        width="1.3"
-        height="1.3"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-      <a-plane
-        src="#tex-imagem-home"
-        position="-10 0.1 -9.5"
-        rotation="-90 90 0"
-        width="13.63"
-        height="4.5"
-        transparent="true"
-        shader="flat"
-        side="double"
-      >
-      </a-plane>
-      <!--FIM DECORAÇÃO QUADRA-->
-
-      <a-sky color="#87CEEB"></a-sky>
     </a-scene>
 
-    <!-- HUD PLACAR -->
     <div id="hud-topo-container">
       <div class="placar-box time-home">
         <div class="label-time">HOME</div>
@@ -1753,9 +566,6 @@
         <div id="score-top-guest" class="numero-placar">00</div>
       </div>
     </div>
-    <!-- FIM HUD PLACAR -->
-
-    <!-- HUD FORÇA DE ARREMESSO -->
     <div id="hud-force-container">
       <div class="hud-label-sm">FORÇA DE ARREMESSO</div>
       <div class="force-btn-group">
@@ -1764,9 +574,6 @@
         <div id="hud-btn-3" class="force-indicator">3</div>
       </div>
     </div>
-    <!-- FIM HUD FORÇA DE ARREMESSO -->
-
-    <!-- HUD MENU LATERAL -->
     <div id="hud-controls" class="hud-panel">
       <div class="control-row">
         <div id="btn-t" class="key-badge">T</div>
@@ -1859,12 +666,8 @@
         <div class="control-label">Ocultar Guia</div>
       </div>
     </div>
-    <!-- FIM HUD MENU LATERAL -->
-
-    <!-- DICA MENU -->
     <div id="hint-menu" class="oculto">
       Pressione <span class="tecla-destaque">G</span> para Guia
     </div>
-    <!-- FIM DICA MENU -->
-  </body>
+    </body>
 </html>
