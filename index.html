@@ -13,6 +13,10 @@
       href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet"
+    />
 
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
@@ -29,74 +33,33 @@
     <div id="notification-container"></div>
 
     <div id="tela-loading">
-      <div class="conteudo-loading">
-        <h1>BASKETBALL.IO</h1>
-        <div class="basketball-spinner"></div>
-        <p>Renderizando quadra</p>
+      <div class="painel-esquerdo"></div>
+
+      <div class="painel-direito">
+        <div class="logo-container">
+          <img
+            src="./images/logo.png"
+            class="logo-img"
+            alt="Basketball.io"
+          />
+        </div>
+
+        <div id="loading-status">
+          <div class="spinner"></div>
+          <p id="loading-text">RENDERIZANDO QUADRA...</p>
+        </div>
+
+        <button id="btn-iniciar">INICIAR JOGO</button>
+
+        <div class="creditos">
+          <p>Guilherme Kenzo Takano Miller</p>
+          <p>Luan Henrique Lopes Santana</p>
+        </div>
       </div>
     </div>
 
-    <style>
-      #tela-loading {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #1a1a1a;
-        z-index: 99999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: opacity 1s ease-out;
-      }
-
-      #tela-loading.esconder {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .conteudo-loading {
-        text-align: center;
-        font-family: "Roboto", sans-serif;
-        color: white;
-      }
-
-      h1 {
-        font-size: 24px;
-        letter-spacing: 2px;
-        margin-bottom: 20px;
-      }
-
-      p {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 16px;
-        margin-top: 10px;
-      }
-
-      .basketball-spinner {
-        width: 60px;
-        height: 60px;
-        background-color: #ff8000;
-        border-radius: 50%;
-        border: 2px solid #000;
-
-        box-shadow: inset 0 0 0 2px #000, inset 2px 2px 0 2px #000,
-          inset -2px -2px 0 2px #000;
-
-        animation: spin 1s linear infinite;
-        margin: 0 auto 20px auto;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-    <!-- FIM TELA DE CARREGAMENTO -->
-
     <a-scene
+      loading-screen="enabled: false"
       physics="debug: false; gravity: -12; restitution: 0.5; iterations: 20"
       raycaster="objects: .interativo"
       controle-placar
@@ -1620,28 +1583,28 @@
       </a-gltf-model>
       <a-gltf-model
         src="#modelo-maquina"
-        position="-12 0 5"
+        position="-15.6 2.69 2.3"
         rotation="0 90 0"
-        scale="0.05 0.05 0.05"
+        scale="2.15 2.15 2.15"
       >
       </a-gltf-model>
       <a-gltf-model
         src="#modelo-lixeira"
-        position="-11.7 1.2 7.5"
+        position="-11.7 1.2 4.7"
         rotation="0 90 0"
         scale="1.5 1.5 1.5"
       >
       </a-gltf-model>
       <a-gltf-model
         src="#modelo-jornal"
-        position="-11.5 2.33 7.52"
+        position="-11.5 2.33 4.72"
         rotation="0 78 0"
         scale="0.08 0.08 0.08"
       >
       </a-gltf-model>
       <a-gltf-model
         src="#modelo-lixos"
-        position="-11.8 0 8.8"
+        position="-11.8 0 8.51"
         rotation="0 125 0"
         scale="1 1 1"
       >
