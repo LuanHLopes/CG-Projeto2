@@ -1,6 +1,5 @@
 AFRAME.registerComponent("menu-placar", {
   init: function () {
-    // === 1. TEXTURAS (MANTIDO) ===
     const criarTextura = (id, width, height, drawFn) => {
       if (!document.getElementById(id)) {
         const canvas = document.createElement("canvas");
@@ -48,7 +47,6 @@ AFRAME.registerComponent("menu-placar", {
     window.cestaSelecionada = window.cestaSelecionada || 1;
     if (typeof window.configMira === "undefined") window.configMira = true;
 
-    // === 2. ESTRUTURA VISUAL ===
     const container = document.createElement("a-entity");
     container.setAttribute("position", "4.35 10.0 -8.3");
     container.setAttribute("rotation", "0 -10 0");
@@ -57,7 +55,6 @@ AFRAME.registerComponent("menu-placar", {
     this.el.appendChild(container);
     this.container = container;
 
-    // Decoração
     const bolaAncora = document.createElement("a-circle");
     bolaAncora.setAttribute("radius", "0.03");
     bolaAncora.setAttribute("color", "white");
@@ -83,7 +80,6 @@ AFRAME.registerComponent("menu-placar", {
     });
     container.appendChild(linhaHorizontal);
 
-    // Título e Prompt
     const titulo = document.createElement("a-text");
     titulo.setAttribute("value", "Placar");
     titulo.setAttribute("font", "roboto");
@@ -124,7 +120,6 @@ AFRAME.registerComponent("menu-placar", {
     textoInteragir.setAttribute("position", "0.26 0 0");
     grupoF.appendChild(textoInteragir);
 
-    // === 3. MENU PRINCIPAL ===
     this.menuAberto = false;
     const menuPrincipalY = 0.025;
 
@@ -168,7 +163,6 @@ AFRAME.registerComponent("menu-placar", {
 
       itemGroup.appendChild(bgItem);
 
-      // Lógica de posição do texto
       const textX = -(largura / 2) + 0.2;
 
       const textoItem = document.createElement("a-text");
@@ -179,7 +173,6 @@ AFRAME.registerComponent("menu-placar", {
 
       let fundo = null;
       if (temCirculo) {
-        // Lógica de posição do círculo
         const offset = largura > 2.5 ? 0.15 : 0.25;
         const circleX = largura / 2 - offset;
 
@@ -199,7 +192,6 @@ AFRAME.registerComponent("menu-placar", {
       return { bgItem, itemGroup, fundo };
     };
 
-    // --- ITENS MENU PRINCIPAL (Largura 2.7) ---
     const W_MAIN = 2.7;
     const principalItens = [];
     principalItens.push(
@@ -221,10 +213,8 @@ AFRAME.registerComponent("menu-placar", {
       criarItem(menuPrincipal, "Desafio On Fire", -1.025, false, W_MAIN)
     );
 
-    // === 4. SUBMENUS (Posição Ajustada para 5.7) ===
     const SUBMENU_X = 5.7;
 
-    // Submenu Timer
     const submenuTimer = document.createElement("a-entity");
     submenuTimer.setAttribute("position", `${SUBMENU_X} 0.8 ${profundidade}`);
     submenuTimer.setAttribute("visible", false);
@@ -234,7 +224,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubTimer = document.createElement("a-plane");
     bgSubTimer.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubTimer.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubTimer.setAttribute("width", "2.3");
     bgSubTimer.setAttribute("height", "1.5");
     bgSubTimer.setAttribute("transparent", "true");
     bgSubTimer.setAttribute("opacity", "1");
@@ -242,7 +232,6 @@ AFRAME.registerComponent("menu-placar", {
     bgSubTimer.setAttribute("position", "0.85 -0.45 -0.01");
     submenuTimer.appendChild(bgSubTimer);
 
-    // Submenu Cesta
     const submenuCesta = document.createElement("a-entity");
     submenuCesta.setAttribute("position", `${SUBMENU_X} 1.25 ${profundidade}`);
     submenuCesta.setAttribute("visible", false);
@@ -252,7 +241,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubCesta = document.createElement("a-plane");
     bgSubCesta.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubCesta.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubCesta.setAttribute("width", "2.3");
     bgSubCesta.setAttribute("height", "1.0");
     bgSubCesta.setAttribute("transparent", "true");
     bgSubCesta.setAttribute("opacity", "1");
@@ -260,7 +249,6 @@ AFRAME.registerComponent("menu-placar", {
     bgSubCesta.setAttribute("position", "0.85 -0.225 -0.01");
     submenuCesta.appendChild(bgSubCesta);
 
-    // Submenu Mira
     const submenuMira = document.createElement("a-entity");
     submenuMira.setAttribute("position", `${SUBMENU_X} 0.35 ${profundidade}`);
     submenuMira.setAttribute("visible", false);
@@ -270,7 +258,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubMira = document.createElement("a-plane");
     bgSubMira.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubMira.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubMira.setAttribute("width", "2.3");
     bgSubMira.setAttribute("height", "1.0");
     bgSubMira.setAttribute("transparent", "true");
     bgSubMira.setAttribute("opacity", "1");
@@ -278,7 +266,6 @@ AFRAME.registerComponent("menu-placar", {
     bgSubMira.setAttribute("position", "0.85 -0.225 -0.01");
     submenuMira.appendChild(bgSubMira);
 
-    // Submenu Street 21
     const submenuStreet = document.createElement("a-entity");
     submenuStreet.setAttribute(
       "position",
@@ -291,7 +278,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubStreet = document.createElement("a-plane");
     bgSubStreet.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubStreet.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubStreet.setAttribute("width", "2.3");
     bgSubStreet.setAttribute("height", "1.0");
     bgSubStreet.setAttribute("transparent", "true");
     bgSubStreet.setAttribute("opacity", "1");
@@ -299,7 +286,6 @@ AFRAME.registerComponent("menu-placar", {
     bgSubStreet.setAttribute("position", "0.85 -0.225 -0.01");
     submenuStreet.appendChild(bgSubStreet);
 
-    // Submenu Volta ao Mundo
     const submenuVolta = document.createElement("a-entity");
     submenuVolta.setAttribute(
       "position",
@@ -312,7 +298,7 @@ AFRAME.registerComponent("menu-placar", {
 
     const bgSubVolta = document.createElement("a-plane");
     bgSubVolta.setAttribute("src", "#tex-submenu-bg-square");
-    bgSubVolta.setAttribute("width", "2.3"); // [AJUSTADO PARA 2.3]
+    bgSubVolta.setAttribute("width", "2.3");
     bgSubVolta.setAttribute("height", "1.0");
     bgSubVolta.setAttribute("transparent", "true");
     bgSubVolta.setAttribute("opacity", "1");
@@ -320,7 +306,6 @@ AFRAME.registerComponent("menu-placar", {
     bgSubVolta.setAttribute("position", "0.85 -0.225 -0.01");
     submenuVolta.appendChild(bgSubVolta);
 
-    // Linha de Conexão
     const linhaConexao = document.createElement("a-plane");
     linhaConexao.setAttribute("color", "#222222");
     linhaConexao.setAttribute("opacity", "0.9");
@@ -330,8 +315,7 @@ AFRAME.registerComponent("menu-placar", {
     container.appendChild(linhaConexao);
     this.linhaConexao = linhaConexao;
 
-    // === LÓGICA DE ITENS DOS SUBMENUS (Largura 2.1) ===
-    const W_SUB = 2.1; // [AJUSTADO PARA 2.1]
+    const W_SUB = 2.1;
 
     const valoresTimer = [30, 60, 90];
     const subItensTimer = [
@@ -450,15 +434,18 @@ AFRAME.registerComponent("menu-placar", {
 
     this.itemSelecionado = null;
 
-    // === LÓGICA DE CLIQUE MENU PRINCIPAL ===
     principalItens.forEach((ref, idx) => {
       ref.bgItem.addEventListener("click", () => {
         fecharSubmenusInterno();
 
+        if (idx === 5) {
+          if (window.Minigames) window.Minigames.iniciar("onFire", true);
+          this.fecharMenuTotal();
+          return;
+        }
+
         const yLinhaAbsoluta =
           ref.itemGroup.getAttribute("position").y + menuPrincipalY;
-
-        // Posição X da Linha (5.25)
         const xLinha = 5.25;
 
         const abrirSubmenu = (submenuEl) => {
@@ -476,19 +463,11 @@ AFRAME.registerComponent("menu-placar", {
           linhaConexao.setAttribute("visible", true);
         };
 
-        if (idx === 0) {
-          abrirSubmenu(submenuCesta);
-        } else if (idx === 1) {
-          abrirSubmenu(submenuTimer);
-        } else if (idx === 2) {
-          abrirSubmenu(submenuMira);
-        } else if (idx === 3) {
-          abrirSubmenu(submenuStreet);
-        } else if (idx === 4) {
-          abrirSubmenu(submenuVolta);
-        } else if (idx === 5) {
-          console.log("On Fire em breve...");
-        }
+        if (idx === 0) abrirSubmenu(submenuCesta);
+        else if (idx === 1) abrirSubmenu(submenuTimer);
+        else if (idx === 2) abrirSubmenu(submenuMira);
+        else if (idx === 3) abrirSubmenu(submenuStreet);
+        else if (idx === 4) abrirSubmenu(submenuVolta);
       });
     });
 
@@ -565,7 +544,6 @@ AFRAME.registerComponent("menu-placar", {
         window.notificar("INTERAÇÃO BLOQUEADA AGORA");
         return;
       }
-
       const dist = this.calcularDistancia();
       if (
         dist === null ||
@@ -573,13 +551,9 @@ AFRAME.registerComponent("menu-placar", {
         !this.container.getAttribute("visible")
       )
         return;
-
       this.menuAberto = !this.menuAberto;
-      if (this.menuAberto) {
-        this.menuPrincipal.setAttribute("scale", "1 1 1");
-      } else {
-        this.fecharMenuTotal();
-      }
+      if (this.menuAberto) this.menuPrincipal.setAttribute("scale", "1 1 1");
+      else this.fecharMenuTotal();
     }
   },
 

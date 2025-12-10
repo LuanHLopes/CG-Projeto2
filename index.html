@@ -37,11 +37,7 @@
 
       <div class="painel-direito">
         <div class="logo-container">
-          <img
-            src="./images/logo.png"
-            class="logo-img"
-            alt="Basketball.io"
-          />
+          <img src="./images/logo.png" class="logo-img" alt="Basketball.io" />
         </div>
 
         <div id="loading-status">
@@ -1515,6 +1511,7 @@
         position="11.7 0 -9"
         rotation="0 -90 0"
         scale="0.025 0.025 0.025"
+        auto-collider="tipo: hull"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1522,6 +1519,7 @@
         position="11.95 1.9 -12.2"
         rotation="0 -55 0"
         scale="3 3 3"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1529,6 +1527,7 @@
         position="12.1 1.4 -6.6"
         rotation="0 0 0"
         scale="0.0005 0.0005 0.0005"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1536,6 +1535,7 @@
         position="11.85 1.05 -6.8"
         rotation="0 0 0"
         scale="0.05 0.05 0.05"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1543,6 +1543,7 @@
         position="11.3 -0.25 -8.05"
         rotation="-15 20 -15"
         scale="0.4 0.4 0.4"
+        auto-collider="tipo: mesh"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1551,6 +1552,7 @@
         rotation="0 -225 0"
         scale="0.05 0.05 0.05"
         animation-mixer="clip: *; loop: repeat; timeScale: 1"
+        auto-collider="tipo: mesh"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1558,6 +1560,7 @@
         position="9.7 -0.25 15.5"
         rotation="0 -165 0"
         scale="3 3 3"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1565,6 +1568,7 @@
         position="11.7 0 10.5"
         rotation="0 -90 0"
         scale="0.025 0.025 0.025"
+        auto-collider="tipo: hull"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1572,6 +1576,7 @@
         position="11.75 1.1 7.5"
         rotation="0 145 90"
         scale="0.4 0.4 0.4"
+        auto-collider="tipo: hull"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1586,6 +1591,7 @@
         position="-15.6 2.69 2.3"
         rotation="0 90 0"
         scale="2.15 2.15 2.15"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1593,6 +1599,7 @@
         position="-11.7 1.2 4.7"
         rotation="0 90 0"
         scale="1.5 1.5 1.5"
+        auto-collider="tipo: box"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1607,6 +1614,7 @@
         position="-11.8 0 8.51"
         rotation="0 125 0"
         scale="1 1 1"
+        auto-collider="tipo: hull"
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1876,5 +1884,42 @@
       </div>
     </div>
     <!-- FIM TELAS DOS MINIGAMES -->
+
+    <div id="hud-combo-container" class="oculto">
+      <div class="label-combo">MULTIPLICADOR</div>
+      <div id="valor-combo" class="nivel-x1">x1</div>
+      <div id="barra-combo-bg"><div id="barra-combo-fill"></div></div>
+    </div>
+
+    <div id="game-over-overlay" class="oculto">
+      <div class="game-over-box">
+        <h1 id="go-titulo">FIM DE JOGO</h1>
+        <h2 id="go-status">VENCEU!</h2>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label" id="label-principal">TEMPO</span>
+            <span class="stat-value" id="val-principal">00:00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">TOTAL</span>
+            <span class="stat-value" id="val-total">00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">CESTAS 3PTS</span>
+            <span class="stat-value" id="val-3pts">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">CESTAS 2PTS</span>
+            <span class="stat-value" id="val-2pts">0</span>
+          </div>
+        </div>
+
+        <div class="buttons-row">
+          <button id="btn-reiniciar">REINICIAR</button>
+          <button id="btn-sair">SAIR</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
