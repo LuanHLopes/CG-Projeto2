@@ -7,29 +7,29 @@ const ICONE_ALERTA = `
   <path d="M12 2L1 21h22L12 2zm0 3.45l8.27 14.28H3.73L12 5.45zM11 10v6h2v-6h-2zm0 8v2h2v-2h-2z"/>
 </svg>`;
 
-window.notificar = function(texto) {
-    const container = document.getElementById("notification-container");
-    if (!container) return;
+window.notificar = function (texto) {
+  const container = document.getElementById("notification-container");
+  if (!container) return;
 
-    const el = document.createElement("div");
-    el.className = "toast-alert";
-    el.innerHTML = `${ICONE_ALERTA} <span>${texto}</span>`;
-    
-    if (window.cestaSelecionada === 1) {
-        el.style.borderLeftColor = "#00aaff"; // Azul
-    } else {
-        el.style.borderLeftColor = "#ffaa00"; // Laranja
-    }
+  const el = document.createElement("div");
+  el.className = "toast-alert";
+  el.innerHTML = `${ICONE_ALERTA} <span>${texto}</span>`;
 
-    container.appendChild(el);
+  if (window.cestaSelecionada === 1) {
+    el.style.borderLeftColor = "#00aaff"; // Azul
+  } else {
+    el.style.borderLeftColor = "#ffaa00"; // Laranja
+  }
 
-    // Remove após 3 segundos
-    setTimeout(() => {
-        el.classList.add("saindo");
-        el.addEventListener("animationend", () => {
-            if(el.parentElement) el.remove();
-        });
-    }, 3000);
+  container.appendChild(el);
+
+  // Remove após 3 segundos
+  setTimeout(() => {
+    el.classList.add("saindo");
+    el.addEventListener("animationend", () => {
+      if (el.parentElement) el.remove();
+    });
+  }, 3000);
 };
 
 window.cestaSelecionada = 1;
@@ -91,6 +91,7 @@ AFRAME.registerComponent("controle-ui", {
     this.hudLateral = document.getElementById("hud-controls");
     this.txtPlacar = document.getElementById("txt-placar");
     this.hintMenu = document.getElementById("hint-menu");
+    this.prompts = document.getElementById("minigame-prompts"); // Referência nova
 
     this.placarVisivel = true;
     this.menuVisivel = true;
@@ -102,12 +103,10 @@ AFRAME.registerComponent("controle-ui", {
   onKeyDown: function (e) {
     if (e.code === "KeyP") {
       this.placarVisivel = !this.placarVisivel;
-
       if (this.hudTopo) {
         if (this.placarVisivel) this.hudTopo.classList.remove("oculto");
         else this.hudTopo.classList.add("oculto");
       }
-
       if (this.txtPlacar) {
         this.txtPlacar.innerText = this.placarVisivel
           ? "Ocultar Placar"
@@ -119,18 +118,18 @@ AFRAME.registerComponent("controle-ui", {
       this.menuVisivel = !this.menuVisivel;
 
       if (this.hudLateral) {
-        if (this.menuVisivel) {
+        if (this.menuVisivel)
           this.hudLateral.classList.remove("oculto-lateral");
-        } else {
-          this.hudLateral.classList.add("oculto-lateral");
-        }
+        else this.hudLateral.classList.add("oculto-lateral");
       }
 
       if (this.hintMenu) {
         if (this.menuVisivel) {
           this.hintMenu.classList.add("oculto");
+          if (this.prompts) this.prompts.classList.remove("deslocado");
         } else {
           this.hintMenu.classList.remove("oculto");
+          if (this.prompts) this.prompts.classList.add("deslocado");
         }
       }
     }
