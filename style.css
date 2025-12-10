@@ -934,3 +934,8 @@ body {
   text-transform: uppercase;
   margin-top: 2px;
 }
+
+.hud-deslocado-cima {
+  bottom: 90px !important; 
+  transition: bottom 0.3s ease;
+}

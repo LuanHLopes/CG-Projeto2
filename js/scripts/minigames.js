@@ -580,16 +580,12 @@ const Desafios = {
   },
 };
 
-/* ====================================================================
-   MINIGAMES - SISTEMA CENTRAL
-==================================================================== */
-
 const Minigames = {
   desafioSelecionado: null,
   _listenerTeclas: null,
   _configUsarTimer: true,
 
-  // ... (funções _getMarcador, _moverMarcador, _piscarMarcadorErro, _esconderMarcador MANTIDAS IGUAIS) ...
+  // ... (funções _getMarcador, _moverMarcador, _piscarMarcadorErro MANTIDAS) ...
   _getMarcador: function () {
     let marcador = document.getElementById("marcador-minigame");
     if (!marcador) {
@@ -607,7 +603,7 @@ const Minigames = {
 
       const square = document.createElement("a-plane");
       square.id = "marcador-quadrado";
-      square.setAttribute("width", "8"); // 8x6
+      square.setAttribute("width", "8");
       square.setAttribute("height", "6");
       square.setAttribute("rotation", "-90 0 0");
       square.setAttribute(
@@ -710,30 +706,16 @@ const Minigames = {
 
   _togglePrompts: function (mostrar, apenasSair = false) {
     const prompts = document.getElementById("minigame-prompts");
-    const hintMenu = document.getElementById("hint-menu");
-
     if (!prompts) return;
-
     if (mostrar) {
       prompts.classList.remove("oculto");
-
-      if (hintMenu && !hintMenu.classList.contains("oculto")) {
-        prompts.classList.add("deslocado");
-      } else {
-        prompts.classList.remove("deslocado");
-      }
-
       const itens = prompts.querySelectorAll(".prompt-item");
       if (itens.length >= 2) {
-        if (apenasSair) {
-          itens[0].style.display = "none";
-        } else {
-          itens[0].style.display = "flex";
-        }
+        if (apenasSair) itens[0].style.display = "none";
+        else itens[0].style.display = "flex";
       }
     } else {
       prompts.classList.add("oculto");
-      prompts.classList.remove("deslocado");
     }
   },
 
@@ -828,7 +810,7 @@ const Minigames = {
       this._atualizarEstado(window.GAME_STATUS.ESPERA, desafio.enumMode);
       this._configurarControles();
       this._togglePrompts(true, false);
-      this._toggleInfo(true, desafio);
+      this._toggleInfo(true, desafio); // Mostra info na espera
       return `Aguardando start...`;
     } else {
       console.error(`❌ Desafio '${idDesafio}' não encontrado.`);
@@ -839,7 +821,6 @@ const Minigames = {
   _configurarControles: function () {
     if (this._listenerTeclas)
       window.removeEventListener("keydown", this._listenerTeclas);
-
     this._listenerTeclas = (e) => {
       if (
         e.code === "KeyI" &&
@@ -853,6 +834,7 @@ const Minigames = {
         this._toggleResetUI(false);
         this._togglePrompts(true, true);
 
+        // Mira
         if (window.configMira === false) {
           this._toggleMiraUI(false);
           const bola = document.getElementById("bola");
@@ -869,18 +851,21 @@ const Minigames = {
             if (txtMira) txtMira.innerText = "BLOQUEADA";
           }
         }
-
         this._limparAmbiente();
         this._iniciarContagem(() => {
           this._atualizarEstado(window.GAME_STATUS.ATIVO);
+
+          // [MODIFICAÇÃO AQUI] Oculta as regras ao começar
+          this._toggleInfo(false);
+
           this.desafioSelecionado.iniciar(this._configUsarTimer);
         });
       }
-
       if (e.code === "KeyO") {
         const overlay = document.getElementById("countdown-overlay");
         if (overlay) overlay.classList.add("oculto");
 
+        // Game Over ao sair
         if (
           this.desafioSelecionado &&
           window.estadoJogo.status === window.GAME_STATUS.ATIVO
@@ -899,9 +884,7 @@ const Minigames = {
     const overlay = document.getElementById("game-over-overlay");
     if (!overlay) return;
 
-    // Popula dados
     document.getElementById("go-titulo").innerText = dados.titulo;
-
     const statusEl = document.getElementById("go-status");
     statusEl.innerText = dados.status;
     statusEl.style.color = dados.corStatus;
@@ -912,11 +895,9 @@ const Minigames = {
     document.getElementById("val-3pts").innerText = dados.c3;
     document.getElementById("val-2pts").innerText = dados.c2;
 
-    // Botões
     const btnReiniciar = document.getElementById("btn-reiniciar");
     const btnSair = document.getElementById("btn-sair");
 
-    // Clona para remover listeners antigos
     const novoBtnReiniciar = btnReiniciar.cloneNode(true);
     const novoBtnSair = btnSair.cloneNode(true);
     btnReiniciar.parentNode.replaceChild(novoBtnReiniciar, btnReiniciar);
@@ -931,11 +912,7 @@ const Minigames = {
       Minigames.pararTotal();
     });
 
-    // Congela interação mudando estado para algo diferente de ATIVO
-    // Usamos "CONTAGEM" pois ela já bloqueia movimento e pulo nos scripts
     window.estadoJogo.status = window.GAME_STATUS.CONTAGEM;
-
-    // Exibe mouse para clicar nos botões
     document.exitPointerLock();
     overlay.classList.remove("oculto");
   },
@@ -943,37 +920,25 @@ const Minigames = {
   _ocultarGameOver: function () {
     const overlay = document.getElementById("game-over-overlay");
     if (overlay) overlay.classList.add("oculto");
-
-    // Retorna foco para o jogo (requer clique do usuário normalmente,
-    // mas o A-Frame gerencia isso ao clicar na cena depois)
   },
 
   reiniciarDesafio: function () {
     this._ocultarGameOver();
-
-    // Reseta estado interno do desafio atual (se houver)
     if (this.desafioSelecionado) {
-      this.desafioSelecionado.parar(); // Limpa listeners antigos
+      this.desafioSelecionado.parar();
     }
-
-    // Reseta ambiente (placar, cronometro)
     this._limparAmbiente();
-
-    // Volta para o estado de ESPERA (Aguardando 'I')
     this._atualizarEstado(
       window.GAME_STATUS.ESPERA,
       this.desafioSelecionado.enumMode
     );
-
-    // Garante prompts corretos
     this._togglePrompts(true, false);
-    this._toggleInfo(true, this.desafioSelecionado);
-
-    console.log("🔄 Desafio Reiniciado (Aguardando Start)");
+    this._toggleInfo(true, this.desafioSelecionado); // Mostra regras novamente na espera
+    console.log("🔄 Desafio Reiniciado");
   },
 
   pararTotal: function () {
-    this._ocultarGameOver(); // Garante que fecha a tela
+    this._ocultarGameOver();
     if (this.desafioSelecionado) {
       this.desafioSelecionado.parar();
       this.desafioSelecionado = null;
@@ -1014,7 +979,6 @@ const Minigames = {
   },
 };
 
-// === HELPERS DE UI ===
 Minigames._toggleMoveAlert = function (show) {
   let alert = document.getElementById("alert-move");
   if (!alert) {
@@ -1057,5 +1021,4 @@ Minigames._toggleComboUI = function (mostrar) {
   else hud.classList.add("oculto");
 };
 
-// Exporta globalmente
 window.Minigames = Minigames;

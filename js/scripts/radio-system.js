@@ -1,6 +1,6 @@
 AFRAME.registerComponent("radio-system", {
   init: function () {
-    const nomesArquivos = ["Eu acho que pirei.mp3", "Love Never Fails.mp3"];
+    const nomesArquivos = ["Eu Acho Que Pirei.mp3", "Love Never Fails.mp3"];
 
     this.playlist = nomesArquivos.map((nome) => `./radio/${nome}`);
 
@@ -13,6 +13,7 @@ AFRAME.registerComponent("radio-system", {
     this.trackNameElement = document.getElementById("radio-track-name");
     this.statusElement = document.getElementById("radio-status");
 
+    // Auto-próxima
     this.audio.addEventListener("ended", () => {
       this.proxima();
     });
@@ -28,19 +29,29 @@ AFRAME.registerComponent("radio-system", {
   atualizarHUD: function () {
     if (!this.hudElement) return;
 
-    this.hudElement.classList.remove("oculto");
-
-    const nomeAtual = this.formatarNome(this.playlist[this.indexAtual]);
-    this.trackNameElement.innerText = nomeAtual;
+    // ID da barra de força (ajuste se seu ID for diferente)
+    const hudArremesso = document.getElementById("hud-force-container");
 
     if (this.tocando) {
+      // === MOSTRAR TUDO ===
+      this.hudElement.classList.remove("oculto");
+      this.hudElement.classList.add("tocando");
+
+      // Empurra a barra de força para cima
+      if (hudArremesso) hudArremesso.classList.add("hud-deslocado-cima");
+
+      // Atualiza Textos
+      const nomeAtual = this.formatarNome(this.playlist[this.indexAtual]);
+      this.trackNameElement.innerText = nomeAtual;
       this.statusElement.innerText = "Tocando Agora";
       this.statusElement.style.color = "#1db954";
-      this.hudElement.classList.add("tocando");
     } else {
-      this.statusElement.innerText = "Pausado";
-      this.statusElement.style.color = "#b3b3b3";
+      // === ESCONDER TUDO ===
+      this.hudElement.classList.add("oculto");
       this.hudElement.classList.remove("tocando");
+
+      // Devolve a barra de força para baixo
+      if (hudArremesso) hudArremesso.classList.remove("hud-deslocado-cima");
     }
   },
 
@@ -65,7 +76,7 @@ AFRAME.registerComponent("radio-system", {
   pausar: function () {
     this.audio.pause();
     this.tocando = false;
-    this.atualizarHUD();
+    this.atualizarHUD(); // Isso agora vai esconder o HUD
   },
 
   proxima: function () {
