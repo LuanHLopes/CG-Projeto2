@@ -1,6 +1,6 @@
 AFRAME.registerComponent("radio-system", {
   init: function () {
-    const nomesArquivos = ["Eu Acho Que Pirei.mp3", "Love Never Fails.mp3"];
+    const nomesArquivos = ["Eu Acho Que Pirei.mp3", "Love Never Fails.mp3", "The Fate Of Ophelia.mp3"];
 
     this.playlist = nomesArquivos.map((nome) => `./radio/${nome}`);
 
