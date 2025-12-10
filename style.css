@@ -863,3 +863,74 @@ body {
   opacity: 0;
   transform: translateY(10px);
 }
+
+/* === HUD RÁDIO (MINI PLAYER) === */
+#radio-mini-hud {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 220px;
+  height: 60px;
+  background-color: rgba(20, 20, 20, 0.9);
+  border-left: 4px solid #1db954; 
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  font-family: "Roboto", sans-serif;
+  z-index: 9990;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#radio-mini-hud.oculto {
+  transform: translateY(100px); 
+  opacity: 0;
+}
+
+.radio-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-right: 15px;
+}
+
+.bar {
+  width: 4px;
+  background-color: #1db954;
+  height: 5px;
+  transition: height 0.1s ease;
+}
+
+.tocando .bar1 { animation: equalizador 0.5s infinite alternate; }
+.tocando .bar2 { animation: equalizador 0.7s infinite alternate; }
+.tocando .bar3 { animation: equalizador 0.6s infinite alternate; }
+
+@keyframes equalizador {
+  0% { height: 5px; }
+  100% { height: 20px; }
+}
+
+.radio-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#radio-track-name {
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#radio-status {
+  color: #b3b3b3;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}

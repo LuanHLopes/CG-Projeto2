@@ -839,6 +839,7 @@ const Minigames = {
   _configurarControles: function () {
     if (this._listenerTeclas)
       window.removeEventListener("keydown", this._listenerTeclas);
+
     this._listenerTeclas = (e) => {
       if (
         e.code === "KeyI" &&
@@ -852,7 +853,6 @@ const Minigames = {
         this._toggleResetUI(false);
         this._togglePrompts(true, true);
 
-        // Mira
         if (window.configMira === false) {
           this._toggleMiraUI(false);
           const bola = document.getElementById("bola");
@@ -869,16 +869,26 @@ const Minigames = {
             if (txtMira) txtMira.innerText = "BLOQUEADA";
           }
         }
+
         this._limparAmbiente();
         this._iniciarContagem(() => {
           this._atualizarEstado(window.GAME_STATUS.ATIVO);
           this.desafioSelecionado.iniciar(this._configUsarTimer);
         });
       }
+
       if (e.code === "KeyO") {
         const overlay = document.getElementById("countdown-overlay");
         if (overlay) overlay.classList.add("oculto");
-        this.pararTotal();
+
+        if (
+          this.desafioSelecionado &&
+          window.estadoJogo.status === window.GAME_STATUS.ATIVO
+        ) {
+          this.desafioSelecionado.finalizar(false);
+        } else {
+          this.pararTotal();
+        }
       }
     };
     window.addEventListener("keydown", this._listenerTeclas);

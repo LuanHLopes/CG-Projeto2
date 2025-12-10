@@ -1520,6 +1520,8 @@
         rotation="0 -55 0"
         scale="3 3 3"
         auto-collider="tipo: box"
+        radio-system
+        menu-radio
       >
       </a-gltf-model>
       <a-gltf-model
@@ -1885,12 +1887,15 @@
     </div>
     <!-- FIM TELAS DOS MINIGAMES -->
 
+    <!-- COMBOS ONFIRE -->
     <div id="hud-combo-container" class="oculto">
       <div class="label-combo">MULTIPLICADOR</div>
       <div id="valor-combo" class="nivel-x1">x1</div>
       <div id="barra-combo-bg"><div id="barra-combo-fill"></div></div>
     </div>
+    <!-- FIM COMBOS ONFIRE -->
 
+    <!-- TELA FIM DE JOGO -->
     <div id="game-over-overlay" class="oculto">
       <div class="game-over-box">
         <h1 id="go-titulo">FIM DE JOGO</h1>
@@ -1921,5 +1926,20 @@
         </div>
       </div>
     </div>
+    <!-- FIM TELA FIM DE JOGO -->
+
+    <!-- HUD RADIO -->
+    <div id="radio-mini-hud" class="oculto">
+      <div class="radio-icon">
+        <div class="bar bar1"></div>
+        <div class="bar bar2"></div>
+        <div class="bar bar3"></div>
+      </div>
+      <div class="radio-info">
+        <div id="radio-track-name">Selecione uma música</div>
+        <div id="radio-status">Parado</div>
+      </div>
+    </div>
+    <!-- FIM HUD RADIO -->
   </body>
 </html>
